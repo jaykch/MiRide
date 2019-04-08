@@ -1,51 +1,47 @@
 package main;
+
 import app.MiRidesSystem;
 import userInterface.Menu;
 import components.Car;
+import components.Booking;
 
 public class Driver {
 
 	public static void main(String[] args) {
-		// TODO Code car class
-		// TODO Code booking class
-		// TODO Code user class
-		// TODO Import Utilities
-			
+
 		Menu menu = new Menu();
 		menu.run();
-		
-		//-------Seed data---------------->
 
-		Car beetle =  new Car("STD999","Volkswagen","Beetle", "Justin Beiber",2);
-		Car mustang =  new Car("STD199","Ford","Mustang", "Justin Beiber",2);
-		Car ferrari =  new Car("STD199","ferarri","458", "Justin Beiber",2);
-
+		// -------Seed data---------------->
 		
 		MiRidesSystem system = new MiRidesSystem();
-		
-		system.addCarToFleet(beetle);
-		system.addCarToFleet(mustang);
-		system.addCarToFleet(ferrari);
-
-		//system.getFleet();
-		
-		beetle.book("Anthony Testing", "Hpkins hpkins", 5);
-		try {
-
-			  if( System.getProperty( "os.name" ).startsWith( "Window" ) ) {
-			     Runtime.getRuntime().exec("cls");
-			  } else {
-			     Runtime.getRuntime().exec("clear");
-			  }
 
 
-			} catch ( e) {
+//		Car beetle = new Car("STD999", "Volkswagen", "Beetle", "Justin Beiber", 2);
+//		Car mustang = new Car("STD199", "Ford", "Mustang", "Justin Beiber", 2);
+//		Car ferrari = new Car("STD199", "ferarri", "458", "Justin Beiber", 2);
+//
+//		system.addCarToFleet(beetle);
+//		system.addCarToFleet(mustang);
+//		system.addCarToFleet(ferrari);
+//
+////		system.getFleetDetails();
+//
+//		beetle.book("Anthony", "Hopkins", 5);
+//		beetle.book("Brad", "Pitt", 5);
+//		beetle.book("Brad1", "Pitt", 5);
+//		beetle.book("Brad2", "Pitt", 5);
+//		beetle.book("Brad3", "Pitt", 5);
+//		
+//		beetle.book.completeBooking(10);
+//
+//		
+//		Booking[] bookings =  beetle.getCurrentBookings();
+//		Booking[] pastBookings =  beetle.getPastBookings();
+//		
+//		System.out.println(bookings[1].getDetails());
+//		System.out.println(pastBookings[0].getDetails());
 
-			  for(int i = 0; i < 1000; i++) {
-			    System.out.println();
-			  }
-
-			}
 	}
 
 }

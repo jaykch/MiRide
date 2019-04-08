@@ -8,15 +8,26 @@ public class Car {
 	private String model;
 	private String driverName;
 	private int passengerCapacity;
-	boolean availabile;
-	private Booking book;
+	private boolean available;
+	private Booking[] currentBookings = new Booking[5];
+	private Booking[] pastBookings = new Booking[100];
+	public Booking book;
+	private String availability;
 
+	// TODO: can current bookings and past bookings array be public
+
+	// Car constructor
 	public Car(String regNo, String make, String model, String driverName, int passengerCapacity) {
-		// TODO: how to make reg number alphabetical && numeric
+
+		// Initialise variables for a car object
+
 		this.regNo = regNo.substring(0, 6);
 		this.make = make;
 		this.model = model;
 		this.driverName = driverName;
+
+		// Make sure passenger capacity is always greater than 0 and less than 10
+
 		if (passengerCapacity < 0) {
 			this.passengerCapacity = 1;
 		} else if (passengerCapacity > 10) {
@@ -25,33 +36,92 @@ public class Car {
 			this.passengerCapacity = passengerCapacity;
 		}
 
-		// Check if registration number contains first 3 alphabets and next 3 digits
-		if (!regNo.substring(0, 3).matches("[a-zA-Z]+")) {
-			// Check if it has anything other than alphabets
-			System.out.println("First 3 charcters of a registration number should only be alphabets");
-		}else if(!regNo.substring(3, 6).matches("[0-9]+")) {
-			System.out.println("Last 3 charcters of a registration number should only be numbers");
+		
+
+		// Check if car has 5 bookings
+
+		if (this.currentBookings[4] == null) {
+			this.available = true;
+		} else {
+			this.available = false;
+		}
+	}
+
+	// --------METHODS------------//
+
+	// Method for booking a car
+
+	public boolean book(String firstName, String lastName, DateTime pickupDate, int numPassengers) {
+		// TODO: add booking code
+		book = new Booking(firstName, lastName, pickupDate, numPassengers, this);
+
+		for (int i = 0; i < this.currentBookings.length; i++) {
+			if (this.currentBookings[i] == null) {
+				this.currentBookings[i] = book;
+				return true;
+			}
 		}
 
-		// --------METHODS------------//
-		// TODO: why does it mean by the method should not do the actual printing
+		System.out.println("completely booked!");
+		return false;
 	}
 
-	public boolean book(String firstName, String lastName, int numPassengers) {
-		// TODO: add booking code
-		book = new Booking(firstName, lastName, new DateTime(), numPassengers, this);
-		return true;
+	// Method to move completed bookings into past bookings array
+	public void moveCompletedBooking() {
+		for (int i = 0; i < currentBookings.length; i++) {
+			if (currentBookings[i].isBookingCompleted) {
+				for (int j = 0; j < pastBookings.length; j++) {
+					if (pastBookings[j] == null) {
+						pastBookings[j] = currentBookings[i];
+						break;
+					}
+				}
+				currentBookings[i] = null;
+				break;
+			}
+		}
 	}
+
+	// Method to return the details of a car
 
 	public String getDetails() {
-		//Ctrl+Shift+f always reformats this 
-		//TODO: try to use print f
+
+		// Note:Ctrl+Shift+f always reformats this
+
+		if (available) {
+			this.availability = "	Yes";
+		} else {
+			this.availability = "	No";
+		}
+
 		return "RegNo:		" + regNo + "\nMake & Model:	" + make + " " + model + "\nDriver Name:	" + driverName
-				+ "\nCapacity:	" + passengerCapacity + "\nAvailability: ";
+				+ "\nCapacity:	" + passengerCapacity + "\nAvailabile: " + availability + "\n";
 	}
 
+	// Method to return the car details in the form of a string
+
 	public String toString() {
+
 		// TODO: what do they want to do in a toString method
-		return regNo + ":" + make + ":" + model + ":" + driverName + ":" + passengerCapacity+ book.getBookingDate();
+
+		return regNo + ":" + make + ":" + model + ":" + driverName + ":" + passengerCapacity + book.getBookingDate();
+	}
+
+	// Method to return car registration number
+
+	public String getRegNo() {
+		return regNo;
+	}
+
+	// Method to get current bookings
+
+	public Booking[] getCurrentBookings() {
+		return this.currentBookings;
+	}
+
+	// Method to get past bookings
+
+	public Booking[] getPastBookings() {
+		return this.pastBookings;
 	}
 }
