@@ -1,3 +1,10 @@
+/*
+* Class: 		Menu
+* Description: 	The class represents the user interface menu that handles 
+* 				input validation and connects to the system.
+* Author: 		Jay Kumar - S3770282
+*/
+
 package userInterface;
 
 import java.util.Scanner;
@@ -17,19 +24,9 @@ public class Menu {
 		Scanner scanner = new Scanner(System.in);
 		MiRidesSystem system = new MiRidesSystem();
 
-		// -------Seed data---------------->
-
-		Car beetle = new Car("STD999", "Volkswagen", "Beetle", "Justin Beiber", 2);
-		Car mustang = new Car("STD199", "Ford", "Mustang", "Justin Beiber", 2);
-		Car ferrari = new Car("STD199", "ferarri", "458", "Justin Beiber", 2);
-
-		system.addCarToFleet(beetle);
-		system.addCarToFleet(mustang);
-		system.addCarToFleet(ferrari);
-
-		// system.getFleet();
-
 		// ---------------------------------------------//
+
+		// handle options from the menu
 		this.menuOptionHandler(scanner, system);
 	}
 
@@ -104,6 +101,9 @@ public class Menu {
 			case "BC":
 				this.bookCar(scanner, system);
 				return;
+			case "CB":
+				this.completeBooking(scanner, system);
+				return;
 			case "DA":
 				System.out.print("\n");
 				system.getFleetDetails();
@@ -111,6 +111,12 @@ public class Menu {
 				return;
 			case "SS":
 				this.searchCar(scanner, system);
+				return;
+			case "SA":
+				this.searchAvailableCars(scanner, system);
+				return;
+			case "SD":
+				this.seedData(scanner, system);
 				return;
 			case "EX":
 				this.goodbyeHandler();
@@ -206,13 +212,19 @@ public class Menu {
 
 		// Get user input to set model of the car
 
-		System.out.print("Enter Passenger Capacity:	");
-
 		// Use parseInt to convert string to integer as when nextInt is used
 		// it skips the nextLine scanner used after it
+		while (true) {
+			try {
+				System.out.print("Enter Passenger Capacity:	");
+				passengerCapacity = Integer.parseInt(scanner.nextLine());
+				break;
+			} catch (Exception e) {
+				System.out.println("\nError: Please enter a valid numer!\n");
+			}
+		}
 
-		passengerCapacity = Integer.parseInt(scanner.nextLine());
-
+		// Call MiRidesSystem to create a car object
 		system.createCar(regNo, make, model, driverName, passengerCapacity);
 
 	}
@@ -231,53 +243,123 @@ public class Menu {
 		String lastName;
 		int numPassengers;
 
-		// Get user input to set model of the car
+		// Store current date
 
-		System.out.print("\nEnter Date Required:		");
-		stringDate = scanner.nextLine();
-		pickupDate = this.stringToDateTime(stringDate);
+		DateTime currentDate = new DateTime();
 
-		System.out.println("\nThe following cars are available on this date\n");
+		while (true) {
 
-		Car[] fleet = system.getFleet();
-		for (int i = 0; i < fleet.length; i++) {
-			if (fleet[i] != null) {
-				System.out.println((i + 1) + " " + fleet[i].getRegNo());
+			// Get user input to set pickup date
+
+			System.out.print("\nEnter Date Required:		");
+			stringDate = scanner.nextLine();
+
+			try {
+				pickupDate = this.stringToDateTime(stringDate);
+				int timeDifference = DateTime.diffDays(pickupDate, currentDate);
+
+				// Check to see if the booking date is not in the past or more than 1 week in
+				// advance
+				if (timeDifference > 0 && timeDifference <= 7) {
+					break;
+				} else {
+					System.out.println("\nError: The date should not be in the past or more than 1 week in advance!");
+				}
+			} catch (Exception e) {
+				System.out.println("\nError: Please enter a date in the format DD/MM/YYYY\n");
 			}
 		}
 
-		System.out.print("\nPlease select the number next to the car you wish to book: ");
-		
-		// Subtract 1 as array starts from 0
-		
-		carID = (Integer.parseInt(scanner.nextLine())-1);
-		car = fleet[carID];
+		while (true) {
+			int maxCount = 0;
+
+			try {
+				System.out.println("\nThe following cars are available on this date\n");
+
+				Car[] fleet = system.getFleet();
+				for (int i = 0; i < fleet.length; i++) {
+					if (fleet[i] != null) {
+						System.out.println((i + 1) + " " + fleet[i].getRegNo());
+						maxCount = i;
+					}
+				}
+
+				System.out.print("\nPlease select the number next to the car you wish to book: ");
+
+				// Subtract 1 as array starts from 0
+
+				carID = (Integer.parseInt(scanner.nextLine()) - 1);
+
+				if (carID <= maxCount && carID >= 0) {
+					car = fleet[carID];
+					break;
+				}
+
+				System.out.println("\nError: Please use the number next to the car!");
+
+			} catch (Exception e) {
+				System.out.println("\nError: Please use the number next to the car!");
+
+			}
+		}
 
 		// Get user input to set first name for booking
 
-		System.out.print("\nEnter First Name:		");
-		firstName = scanner.nextLine();
+		while (true) {
+			System.out.print("\nEnter First Name:		");
+			firstName = scanner.nextLine();
+
+			// Check to see if at least 3 characters
+
+			if (firstName.length() >= 3) {
+				break;
+			}
+			System.out.println("\nError: Last name should be at least 3 characters!");
+		}
 
 		// Get user input to set last name for booking
 
-		System.out.print("Enter Last Name:		");
-		lastName = scanner.nextLine();
+		while (true) {
+			System.out.print("Enter Last Name:		");
+			lastName = scanner.nextLine();
 
-		// Get user input to set model of the car
+			// Check to see if at least 3 characters
 
-		System.out.print("Enter Number of Passengers:	");
+			if (lastName.length() >= 3) {
+				break;
+			}
+			System.out.println("\nError: First name should be at least 3 characters!\n");
+		}
 
-		// Use parseInt to convert string to integer as when nextInt is used
-		// it skips the nextLine scanner used after it
-		numPassengers = Integer.parseInt(scanner.nextLine());
+		while (true) {
+			try {
+				// Get user input to set model of the car
 
-		car.book(firstName, lastName, pickupDate, numPassengers);
-		System.out.println("\n" + car.book.getDetails());
-		
-		this.goBackToMenu(scanner, system);
+				System.out.print("Enter Number of Passengers:	");
+
+				// Use parseInt to convert string to integer as when nesxtInt is used
+				// it skips the nextLine scanner used after it
+
+				numPassengers = Integer.parseInt(scanner.nextLine());
+				break;
+
+			} catch (Exception e) {
+				System.out.println("\nError: Please enter a valid number!\n");
+			}
+		}
+
+		// Call bookCar class from MiRidesSystem to create a booking
+		system.bookCar(firstName, lastName, pickupDate, numPassengers, car);
 	}
 
 	// Method to complete a booking
+
+	public void completeBooking(Scanner scanner, MiRidesSystem system) {
+		System.out.println("\nnot built yet\n");
+
+		// Return to menu
+		this.goBackToMenu(scanner, system);
+	}
 
 	// Method to search a specific car
 
@@ -309,6 +391,44 @@ public class Menu {
 
 	// Method to search available cars
 
-	// Seed Data
+	public void searchAvailableCars(Scanner scanner, MiRidesSystem system) {
+		System.out.println("\nnot built yet\n");
+
+		// Return to menu
+		this.goBackToMenu(scanner, system);
+	}
+
+	// Method to add seed data
+
+	public void seedData(Scanner scanner, MiRidesSystem system) {
+		
+		// Check to see if there are cars in the fleet
+		// If there are no cars there can be no bookings so don't need to check for bookings
+
+		if (system.getFleet()[0] == null) {
+			// -------Seed data---------------->
+
+			Car beetle = new Car("BEE123", "Volkswagen", "Beetle", "Justin Beiber", 2);
+			Car mustang = new Car("STA123", "Ford", "Mustang", "Post Malone", 2);
+			Car ferrari = new Car("FER458", "ferarri", "458", "Ariana Grande", 2);
+			Car eClass = new Car("MBE300", "Mercedes", "E-Class", "Carly Rae Jepson", 5);
+			Car sClass = new Car("MBS250", "Mercedes", "S-Class", "Adolf Hitler", 4);
+			Car GLE = new Car("GLE400", "Mercedes", "GLE 400", "Vlad the Impaler", 7);
+
+			system.addCarToFleet(beetle);
+			system.addCarToFleet(mustang);
+			system.addCarToFleet(ferrari);
+			system.addCarToFleet(eClass);
+			system.addCarToFleet(sClass);
+			system.addCarToFleet(GLE);
+
+			System.out.println("\nSystem has been populated with 6 cars\n");
+		} else {
+			System.out.println("\nError: There are already cars in the fleet!\n");
+		}
+
+		// Return to menu
+		this.goBackToMenu(scanner, system);
+	}
 
 }

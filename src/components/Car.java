@@ -1,3 +1,10 @@
+/*
+* Class: 		Car
+* Description: 	The class represents a single record for any car 
+* 				that can be created.
+* Author: 		Jay Kumar - S3770282
+*/
+
 package components;
 
 import utils.DateTime;
@@ -12,7 +19,6 @@ public class Car {
 	private Booking[] currentBookings = new Booking[5];
 	private Booking[] pastBookings = new Booking[100];
 	public Booking book;
-	private String availability;
 
 	// TODO: can current bookings and past bookings array be public
 
@@ -35,8 +41,6 @@ public class Car {
 		} else {
 			this.passengerCapacity = passengerCapacity;
 		}
-
-		
 
 		// Check if car has 5 bookings
 
@@ -87,11 +91,11 @@ public class Car {
 	public String getDetails() {
 
 		// Note:Ctrl+Shift+f always reformats this
-
+		String availability;
 		if (available) {
-			this.availability = "	Yes";
+			availability = "	Yes";
 		} else {
-			this.availability = "	No";
+			availability = "	No";
 		}
 
 		return "RegNo:		" + regNo + "\nMake & Model:	" + make + " " + model + "\nDriver Name:	" + driverName
@@ -123,5 +127,17 @@ public class Car {
 
 	public Booking[] getPastBookings() {
 		return this.pastBookings;
+	}
+
+	// Method to get driver name
+
+	public String getDriverName() {
+		return this.driverName;
+	}
+
+	// Method to get Passenger Capacity
+
+	public int getPassengerCapacity() {
+		return this.passengerCapacity;
 	}
 }

@@ -1,3 +1,10 @@
+/*
+* Class: 		Bookings
+* Description: 	The class represents a single booking record for
+* 				any object that can be booked.
+* Author: 		Jay Kumar - S3770282
+*/
+
 package components;
 
 import utils.DateTime;
@@ -57,6 +64,11 @@ public class Booking {
 					+ car.getRegNo() + "\n";
 		}
 
+	}
+
+	// Method to get booking id
+	public String getBookingID() {
+		return this.id;
 	}
 
 	// Method to complete booking
