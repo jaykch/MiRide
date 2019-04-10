@@ -11,7 +11,6 @@ import java.util.Scanner;
 import utils.DateTime;
 import app.MiRidesSystem;
 import components.Car;
-import components.Booking;
 
 public class Menu {
 
@@ -132,8 +131,6 @@ public class Menu {
 
 	// Method to validate registration number
 
-	// TODO: Error handling of invalid registration input
-
 	public String validateRegNo(String regNo, Scanner scanner) {
 		while (true) {
 			if (regNo.length() != 6) {
@@ -230,9 +227,6 @@ public class Menu {
 	}
 
 	// Method to book a car
-	// TODO: DateTime sets date and time
-	// TODO: What if people add digits or integers into next line
-	// TODO: Next int solution for scanner
 
 	public void bookCar(Scanner scanner, MiRidesSystem system) {
 		String stringDate;
@@ -242,6 +236,10 @@ public class Menu {
 		String firstName;
 		String lastName;
 		int numPassengers;
+
+		// Store number of available cars so the right number can be displayed next to
+		// it
+		int numAvailableCars;
 
 		// Store current date
 
@@ -260,7 +258,7 @@ public class Menu {
 
 				// Check to see if the booking date is not in the past or more than 1 week in
 				// advance
-				if (timeDifference > 0 && timeDifference <= 7) {
+				if (timeDifference >= 0 && timeDifference < 7) {
 					break;
 				} else {
 					System.out.println("\nError: The date should not be in the past or more than 1 week in advance!");
@@ -270,32 +268,56 @@ public class Menu {
 			}
 		}
 
+		// Code for printing list of cars
+
 		while (true) {
-			int maxCount = 0;
+			numAvailableCars = 0;
+			String[] availableCarRegs = new String[100];
 
 			try {
-				System.out.println("\nThe following cars are available on this date\n");
 
-				Car[] fleet = system.getFleet();
-				for (int i = 0; i < fleet.length; i++) {
-					if (fleet[i] != null) {
-						System.out.println((i + 1) + " " + fleet[i].getRegNo());
-						maxCount = i;
+				if (system.isAvailableCarsOnDate(pickupDate)) {
+					System.out.println("\nThe following cars are available on this date\n");
+
+					Car[] fleet = system.getFleet();
+					for (int i = 0; i < fleet.length; i++) {
+
+						// Check if fleet field is not null and if the car is available with less than 5
+						// bookings and also available on that particular date
+
+						if (fleet[i] != null && fleet[i].isAvailable() == true
+								&& fleet[i].isAvailableOnDate() == true) {
+							numAvailableCars++;
+							availableCarRegs[numAvailableCars] = fleet[i].getRegNo();
+							System.out.println(numAvailableCars + ". " + availableCarRegs[numAvailableCars]);
+						}
 					}
-				}
 
-				System.out.print("\nPlease select the number next to the car you wish to book: ");
+					System.out.print("\nPlease select the number next to the car you wish to book: ");
 
-				// Subtract 1 as array starts from 0
+					// Subtract 1 as array starts from 0
+					carID = Integer.parseInt(scanner.nextLine());
 
-				carID = (Integer.parseInt(scanner.nextLine()) - 1);
+					// Eclipse won't let me run this code if I don't instantiate the car but I don't
+					// know why because the program will keep looping until it finds the car or it
+					// will go back to menu - Let me know if you figure it out
 
-				if (carID <= maxCount && carID >= 0) {
 					car = fleet[carID];
-					break;
-				}
 
-				System.out.println("\nError: Please use the number next to the car!");
+					if (carID <= numAvailableCars && carID > 0) {
+						for (int i = 0; i < fleet.length; i++) {
+							if (fleet[i] != null && availableCarRegs[carID] == fleet[i].getRegNo()) {
+								car = fleet[i];
+							}
+						}
+						break;
+					}
+					System.out.println("\nError: Please use the number next to the car!");
+
+				} else {
+					System.out.println("\nError: No cars are available on this date!\n");
+					this.goBackToMenu(scanner, system);
+				}
 
 			} catch (Exception e) {
 				System.out.println("\nError: Please use the number next to the car!");
@@ -314,7 +336,7 @@ public class Menu {
 			if (firstName.length() >= 3) {
 				break;
 			}
-			System.out.println("\nError: Last name should be at least 3 characters!");
+			System.out.println("\nError: First name should be at least 3 characters!");
 		}
 
 		// Get user input to set last name for booking
@@ -328,7 +350,7 @@ public class Menu {
 			if (lastName.length() >= 3) {
 				break;
 			}
-			System.out.println("\nError: First name should be at least 3 characters!\n");
+			System.out.println("\nError: Last name should be at least 3 characters!\n");
 		}
 
 		while (true) {
@@ -355,7 +377,67 @@ public class Menu {
 	// Method to complete a booking
 
 	public void completeBooking(Scanner scanner, MiRidesSystem system) {
-		System.out.println("\nnot built yet\n");
+
+		String regOrDate;
+		String firstName;
+		String lastName;
+		double kilometersTravelled;
+		double tripFee;
+		double bookingFee;
+
+		System.out.print("\nEnter Registration or Booking Date: ");
+		regOrDate = scanner.nextLine();
+
+		System.out.print("Enter first name: ");
+		firstName = scanner.nextLine();
+
+		System.out.print("Enter last name: ");
+		lastName = scanner.nextLine();
+
+		for (int i = 0; i < system.getFleet().length; i++) {
+			if (system.getFleet()[i] != null) {
+
+				if (regOrDate.equals(system.getFleet()[i].getRegNo())) {
+					for (int j = 0; j < system.getFleet()[i].getCurrentBookings().length; j++) {
+						if (firstName.equals(system.getFleet()[i].getCurrentBookings()[j].getFirstName())
+								&& lastName.equals(system.getFleet()[i].getCurrentBookings()[j].getLastName())) {
+							System.out.print("Enter kilometers travelled: ");
+							kilometersTravelled = Double.parseDouble(scanner.nextLine());
+							bookingFee = system.getFleet()[i].getCurrentBookings()[j].getBookingFee();
+							tripFee = system.getFleet()[i].getCurrentBookings()[j].completeBooking(kilometersTravelled);
+							System.out.println("\nThank you for riding with MiRide. We hope you enjoyed your trip.");
+							System.out
+									.println("$" + (tripFee + bookingFee) + " has been deducted from your account.\n");
+
+							// Return to menu
+							this.goBackToMenu(scanner, system);
+						}
+					}
+				} else {
+					for (int j = 0; j < system.getFleet()[i].getCurrentBookings().length; j++) {
+						if (system.getFleet()[i].getCurrentBookings()[j] != null
+								&& firstName.equals(system.getFleet()[i].getCurrentBookings()[j].getFirstName())
+								&& lastName.equals(system.getFleet()[i].getCurrentBookings()[j].getLastName())
+								&& regOrDate
+										.contentEquals(system.getFleet()[i].getCurrentBookings()[j].getBookingDate())) {
+							System.out.print("Enter kilometers travelled: ");
+							kilometersTravelled = Double.parseDouble(scanner.nextLine());
+							bookingFee = system.getFleet()[i].getCurrentBookings()[j].getBookingFee();
+							tripFee = system.getFleet()[i].getCurrentBookings()[j].completeBooking(kilometersTravelled);
+							System.out.println("\nThank you for riding with MiRide. We hope you enjoyed your trip.");
+							System.out
+									.println("$" + (tripFee + bookingFee) + " has been deducted from your account.\n");
+
+							// Return to menu
+							this.goBackToMenu(scanner, system);
+						}
+					}
+
+				}
+			}
+		}
+
+		System.out.println("\nError:  The booking could not be located!\n");
 
 		// Return to menu
 		this.goBackToMenu(scanner, system);
@@ -392,7 +474,15 @@ public class Menu {
 	// Method to search available cars
 
 	public void searchAvailableCars(Scanner scanner, MiRidesSystem system) {
-		System.out.println("\nnot built yet\n");
+		System.out.println("\nHere's a list of all available cars:\n");
+
+		Car[] fleet = system.getFleet();
+
+		for (int i = 0; i < fleet.length; i++) {
+			if (fleet[i] != null && fleet[i].isAvailable() == true) {
+				System.out.println(fleet[i].getDetails());
+			}
+		}
 
 		// Return to menu
 		this.goBackToMenu(scanner, system);
@@ -401,9 +491,11 @@ public class Menu {
 	// Method to add seed data
 
 	public void seedData(Scanner scanner, MiRidesSystem system) {
-		
+		DateTime date;
+
 		// Check to see if there are cars in the fleet
-		// If there are no cars there can be no bookings so don't need to check for bookings
+		// If there are no cars there can be no bookings so don't need to check for
+		// bookings
 
 		if (system.getFleet()[0] == null) {
 			// -------Seed data---------------->
@@ -411,16 +503,61 @@ public class Menu {
 			Car beetle = new Car("BEE123", "Volkswagen", "Beetle", "Justin Beiber", 2);
 			Car mustang = new Car("STA123", "Ford", "Mustang", "Post Malone", 2);
 			Car ferrari = new Car("FER458", "ferarri", "458", "Ariana Grande", 2);
+			Car gLE = new Car("GLE400", "Mercedes", "GLE 400", "Vlad the Impaler", 7);
 			Car eClass = new Car("MBE300", "Mercedes", "E-Class", "Carly Rae Jepson", 5);
 			Car sClass = new Car("MBS250", "Mercedes", "S-Class", "Adolf Hitler", 4);
-			Car GLE = new Car("GLE400", "Mercedes", "GLE 400", "Vlad the Impaler", 7);
 
 			system.addCarToFleet(beetle);
 			system.addCarToFleet(mustang);
 			system.addCarToFleet(ferrari);
+			system.addCarToFleet(gLE);
 			system.addCarToFleet(eClass);
 			system.addCarToFleet(sClass);
-			system.addCarToFleet(GLE);
+
+			// Booking 2 cars with incomplete bookings : 1 car with 2 bookings and 1 car
+			// completely booked with 5 bookings
+
+			// Set date 2 days forward and book
+			date = new DateTime(2);
+			eClass.book("Joseph", "Stalin", date, 3);
+
+			// Set date 4 days forward and book
+			date = new DateTime(4);
+			eClass.book("Attila", "the Hun", date, 5);
+
+			// Set date for next 5 days and book a car on each day
+			date = new DateTime(1);
+			gLE.book("Black", "Adam", date, 4);
+			date = new DateTime(2);
+			gLE.book("Osama", "bin Laden", date, 7);
+			date = new DateTime(3);
+			gLE.book("Heinrich", "Himmler", date, 1);
+			date = new DateTime(4);
+			gLE.book("Reinhard", "Heydrich", date, 2);
+			date = new DateTime(5);
+			gLE.book("Maximilien", "Robespierre", date, 6);
+
+			// Note GLE should not be available when you display all cars after using seed
+			// data
+
+			// Booking 2 cars with completed bookings : 1 car with 2 bookings and 1 car
+			// with 3 bookings
+
+			date = new DateTime(2);
+			mustang.book("Mao", "Zedong", date, 1);
+			mustang.book.completeBooking(80);
+			date = new DateTime(3);
+			mustang.book("Idi", "Amin", date, 2);
+			mustang.book.completeBooking(200);
+			date = new DateTime(1);
+			sClass.book("Karl", "Marx", date, 4);
+			sClass.book.completeBooking(125);
+			date = new DateTime(4);
+			sClass.book("Ted", "Bundy", date, 2);
+			sClass.book.completeBooking(117);
+			date = new DateTime(5);
+			sClass.book("Hillary", "Clinton", date, 1);
+			sClass.book.completeBooking(89);
 
 			System.out.println("\nSystem has been populated with 6 cars\n");
 		} else {

@@ -9,11 +9,9 @@ package components;
 
 import utils.DateTime;
 
-//TODO: add business rules
-
 public class Booking {
 	private String id;
-	private double bookingFee;
+	private double bookingFee = 1.50;
 	private DateTime pickupDate;
 	private String firstName;
 	private String lastName;
@@ -66,17 +64,47 @@ public class Booking {
 
 	}
 
+	// Method to return the booking details in the form of a string
+	// TODO: are we supposed to use this instead of get methods?
+	public String toString() {
+
+		return id + ":" + bookingFee + ":" + pickupDate + ":" + firstName + " " + lastName + ":" + kilometersTravelled
+				+ ":" + tripFee + ":" + car.getRegNo() + "\n";
+	}
+
 	// Method to get booking id
+
 	public String getBookingID() {
 		return this.id;
 	}
 
+	// Method to get first name
+
+	public String getFirstName() {
+		return this.firstName;
+	}
+
+	// Method to get last name
+
+	public String getLastName() {
+		return this.lastName;
+	}
+	
+	// Method to get booking fee
+	
+	public Double getBookingFee() {
+		return this.bookingFee;
+	}
+
 	// Method to complete booking
 
-	public void completeBooking(double kilometersTravelled) {
+	public Double completeBooking(double kilometersTravelled) {
+				
 		this.kilometersTravelled = kilometersTravelled;
-		this.tripFee = kilometersTravelled * 30 * 1.5 / 100;
+		this.tripFee = kilometersTravelled * 30 * this.bookingFee / 100;
 		this.isBookingCompleted = true;
 		car.moveCompletedBooking();
+				
+		return this.tripFee;
 	}
 }

@@ -70,8 +70,6 @@ public class MiRidesSystem {
 
 	// Create a car and add it to the fleet
 
-	// TODO: CTRL + SHIFT + F changing back to 120 lines
-
 	public void createCar(String regNo, String make, String model, String driverName, int passengerCapacity) {
 
 		// Check if a car with same registration number exists
@@ -111,15 +109,51 @@ public class MiRidesSystem {
 
 			menu.bookCar(scanner, this);
 
-		} else {
+		} else if (car.book(firstName, lastName, pickupDate, numPassengers)) {
 
-			car.book(firstName, lastName, pickupDate, numPassengers);
 			System.out.println("\nThank you for your booking. " + car.getDriverName() + " will pick you up on "
 					+ pickupDate.getFormattedDate() + ".\r\n" + "Your booking reference is: " + car.book.getBookingID()
 					+ ".\n");
-
-			// Return to menu
-			menu.goBackToMenu(scanner, this);
 		}
+
+		// Return to menu
+		menu.goBackToMenu(scanner, this);
+	}
+
+	// Method to get available cars
+
+	public Boolean isAvailableCarsOnDate(DateTime pickupDate) {
+
+		int numAvailableCars = 0;
+
+		// Set cars to available on date for the given pickup date
+		for (int i = 0; i < fleet.length; i++) {
+			if (fleet[i] != null) {
+
+				// As cars are found in the fleet array add them to the count of available cars
+				numAvailableCars++;
+
+				for (int j = 0; j < fleet[i].getCurrentBookings().length; j++) {
+					if (fleet[i].getCurrentBookings()[j] != null) {
+						String bookedDate = fleet[i].getCurrentBookings()[j].getBookingDate();
+						if (bookedDate.equals(pickupDate.getFormattedDate())) {
+							fleet[i].setAvailableOnDate(false);
+
+							// As cars are found to be not available take that car out of the count for
+							// number of available cars
+							numAvailableCars--;
+						}
+					}
+				}
+			}
+		}
+
+		// Check if there are available cars on this date
+		if (numAvailableCars > 0) {
+			return true;
+		} else {
+			return false;
+		}
+
 	}
 }

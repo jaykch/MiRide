@@ -20,7 +20,9 @@ public class Car {
 	private Booking[] pastBookings = new Booking[100];
 	public Booking book;
 
-	// TODO: can current bookings and past bookings array be public
+	// By default car is available on a date and every time a pickup date is
+	// entered it will check if the car is booked on that date
+	private boolean availableOnDate = true;
 
 	// Car constructor
 	public Car(String regNo, String make, String model, String driverName, int passengerCapacity) {
@@ -42,13 +44,8 @@ public class Car {
 			this.passengerCapacity = passengerCapacity;
 		}
 
-		// Check if car has 5 bookings
-
-		if (this.currentBookings[4] == null) {
-			this.available = true;
-		} else {
-			this.available = false;
-		}
+		// Check if car is available
+		this.checkAvailability();
 	}
 
 	// --------METHODS------------//
@@ -56,8 +53,12 @@ public class Car {
 	// Method for booking a car
 
 	public boolean book(String firstName, String lastName, DateTime pickupDate, int numPassengers) {
-		// TODO: add booking code
+
+		// Create a new booking
+
 		book = new Booking(firstName, lastName, pickupDate, numPassengers, this);
+
+		// Add booking to current bookings
 
 		for (int i = 0; i < this.currentBookings.length; i++) {
 			if (this.currentBookings[i] == null) {
@@ -65,6 +66,11 @@ public class Car {
 				return true;
 			}
 		}
+
+		// If no slot available for booking check availability and set it to false and
+		// return false for the method
+
+		this.checkAvailability();
 
 		System.out.println("completely booked!");
 		return false;
@@ -84,19 +90,25 @@ public class Car {
 				break;
 			}
 		}
+		this.checkAvailability();
 	}
 
 	// Method to return the details of a car
 
 	public String getDetails() {
 
-		// Note:Ctrl+Shift+f always reformats this
+		// Set variable to print yes or no to the availability field
+
+		this.checkAvailability();
+
 		String availability;
 		if (available) {
 			availability = "	Yes";
 		} else {
 			availability = "	No";
 		}
+
+		// Note:Ctrl+Shift+f always reformats this
 
 		return "RegNo:		" + regNo + "\nMake & Model:	" + make + " " + model + "\nDriver Name:	" + driverName
 				+ "\nCapacity:	" + passengerCapacity + "\nAvailabile: " + availability + "\n";
@@ -105,9 +117,6 @@ public class Car {
 	// Method to return the car details in the form of a string
 
 	public String toString() {
-
-		// TODO: what do they want to do in a toString method
-
 		return regNo + ":" + make + ":" + model + ":" + driverName + ":" + passengerCapacity + book.getBookingDate();
 	}
 
@@ -129,6 +138,29 @@ public class Car {
 		return this.pastBookings;
 	}
 
+	// Method to get availability
+	public Boolean isAvailable() {
+		this.checkAvailability();
+		return this.available;
+	}
+
+	// Method to set availability
+	public void checkAvailability() {
+
+		// Set availability to false unless proven later
+		this.available = false;
+
+		// Check if car has an empty booking slot
+
+		for (int i = 0; i < currentBookings.length; i++) {
+			if (this.currentBookings[i] == null) {
+				this.available = true;
+				break;
+			}
+		}
+
+	}
+
 	// Method to get driver name
 
 	public String getDriverName() {
@@ -139,5 +171,13 @@ public class Car {
 
 	public int getPassengerCapacity() {
 		return this.passengerCapacity;
+	}
+
+	public boolean isAvailableOnDate() {
+		return availableOnDate;
+	}
+
+	public void setAvailableOnDate(boolean availableOnDate) {
+		this.availableOnDate = availableOnDate;
 	}
 }
