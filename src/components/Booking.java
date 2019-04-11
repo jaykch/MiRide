@@ -49,6 +49,21 @@ public class Booking {
 	// Method to return the details of a booking
 
 	public String getDetails() {
+		
+		/*
+		* ALGORITHM
+		* BEGIN
+		* 	GET details of a booking
+		* 		COMPUTE booking completed or not
+		* 			IF booking is completed
+		* 				COMPUTE kilometres travelled
+		* 				COMPUTE trip fee
+		* 			ELSE
+		* 				SET kilometres travelled to N/A
+		* 				SET trip fee to N/A
+		* 	DISPLAY details
+		* END
+		*/
 
 		if (isBookingCompleted) {
 			return "id:		" + id + "\nBooking Fee:	" + bookingFee + "\nPick up Date:	"
@@ -65,7 +80,6 @@ public class Booking {
 	}
 
 	// Method to return the booking details in the form of a string
-	// TODO: are we supposed to use this instead of get methods?
 	public String toString() {
 
 		return id + ":" + bookingFee + ":" + pickupDate + ":" + firstName + " " + lastName + ":" + kilometersTravelled

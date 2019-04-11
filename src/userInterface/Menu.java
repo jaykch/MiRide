@@ -132,6 +132,28 @@ public class Menu {
 	// Method to validate registration number
 
 	public String validateRegNo(String regNo, Scanner scanner) {
+		
+		/*
+		* ALGORITHM
+		* BEGIN
+		* 	WHILE True
+		* 		IF registration number is not 6 characters long
+		* 			GET registration number again
+		* 		ELSE IF first 3 characters are not alphabets 
+		* 			GET registration number again
+		* 		ELSE IF last 3 characters are not numbers
+		* 			GET registration number again
+		* 		ELSE 
+		* 			return registration number
+		*END
+		*
+		* TEST
+		* 	registration number is longer than 6 characters, should ask for registration number again
+		* 	registration number is less than 6 characters, should ask for registration number again
+		* 	first 3 characters are not alphabets,  should ask for registration number again
+		* 	last 3 characters are not numbers, should ask for registration number again
+		*/
+		
 		while (true) {
 			if (regNo.length() != 6) {
 				System.out.println("\nError: Registration Number should be 6 characters!\n");
@@ -279,16 +301,15 @@ public class Menu {
 				if (system.isAvailableCarsOnDate(pickupDate)) {
 					System.out.println("\nThe following cars are available on this date\n");
 
-					Car[] fleet = system.getFleet();
-					for (int i = 0; i < fleet.length; i++) {
+					for (int i = 0; i < system.getFleet().length; i++) {
 
 						// Check if fleet field is not null and if the car is available with less than 5
 						// bookings and also available on that particular date
 
-						if (fleet[i] != null && fleet[i].isAvailable() == true
-								&& fleet[i].isAvailableOnDate() == true) {
+						if (system.getFleet()[i] != null && system.getFleet()[i].isAvailable() == true
+								&& system.getFleet()[i].isAvailableOnDate() == true) {
 							numAvailableCars++;
-							availableCarRegs[numAvailableCars] = fleet[i].getRegNo();
+							availableCarRegs[numAvailableCars] = system.getFleet()[i].getRegNo();
 							System.out.println(numAvailableCars + ". " + availableCarRegs[numAvailableCars]);
 						}
 					}
@@ -302,12 +323,13 @@ public class Menu {
 					// know why because the program will keep looping until it finds the car or it
 					// will go back to menu - Let me know if you figure it out
 
-					car = fleet[carID];
+					car = system.getFleet()[carID];
 
 					if (carID <= numAvailableCars && carID > 0) {
-						for (int i = 0; i < fleet.length; i++) {
-							if (fleet[i] != null && availableCarRegs[carID] == fleet[i].getRegNo()) {
-								car = fleet[i];
+						for (int i = 0; i < system.getFleet().length; i++) {
+							if (system.getFleet()[i] != null
+									&& availableCarRegs[carID] == system.getFleet()[i].getRegNo()) {
+								car = system.getFleet()[i];
 							}
 						}
 						break;
@@ -386,7 +408,7 @@ public class Menu {
 		double bookingFee;
 
 		System.out.print("\nEnter Registration or Booking Date: ");
-		regOrDate = scanner.nextLine();
+		regOrDate = scanner.nextLine().toUpperCase();
 
 		System.out.print("Enter first name: ");
 		firstName = scanner.nextLine();
@@ -394,47 +416,60 @@ public class Menu {
 		System.out.print("Enter last name: ");
 		lastName = scanner.nextLine();
 
-		for (int i = 0; i < system.getFleet().length; i++) {
-			if (system.getFleet()[i] != null) {
+		//  Code to find a booking
+		
+		try {
+			for (int i = 0; i < system.getFleet().length; i++) {
+				if (system.getFleet()[i] != null) {
 
-				if (regOrDate.equals(system.getFleet()[i].getRegNo())) {
-					for (int j = 0; j < system.getFleet()[i].getCurrentBookings().length; j++) {
-						if (firstName.equals(system.getFleet()[i].getCurrentBookings()[j].getFirstName())
-								&& lastName.equals(system.getFleet()[i].getCurrentBookings()[j].getLastName())) {
-							System.out.print("Enter kilometers travelled: ");
-							kilometersTravelled = Double.parseDouble(scanner.nextLine());
-							bookingFee = system.getFleet()[i].getCurrentBookings()[j].getBookingFee();
-							tripFee = system.getFleet()[i].getCurrentBookings()[j].completeBooking(kilometersTravelled);
-							System.out.println("\nThank you for riding with MiRide. We hope you enjoyed your trip.");
-							System.out
-									.println("$" + (tripFee + bookingFee) + " has been deducted from your account.\n");
+					if (regOrDate.equals(system.getFleet()[i].getRegNo())) {
+						for (int j = 0; j < system.getFleet()[i].getCurrentBookings().length; j++) {
+							if (firstName.equals(system.getFleet()[i].getCurrentBookings()[j].getFirstName())
+									&& lastName.equals(system.getFleet()[i].getCurrentBookings()[j].getLastName())) {
+								System.out.print("Enter kilometers travelled: ");
+								kilometersTravelled = Double.parseDouble(scanner.nextLine());
+								bookingFee = system.getFleet()[i].getCurrentBookings()[j].getBookingFee();
+								tripFee = system.getFleet()[i].getCurrentBookings()[j]
+										.completeBooking(kilometersTravelled);
+								System.out
+										.println("\nThank you for riding with MiRide. We hope you enjoyed your trip.");
+								System.out.println(
+										"$" + (tripFee + bookingFee) + " has been deducted from your account.\n");
 
-							// Return to menu
-							this.goBackToMenu(scanner, system);
+								// Return to menu
+								this.goBackToMenu(scanner, system);
+							}
 						}
-					}
-				} else {
-					for (int j = 0; j < system.getFleet()[i].getCurrentBookings().length; j++) {
-						if (system.getFleet()[i].getCurrentBookings()[j] != null
-								&& firstName.equals(system.getFleet()[i].getCurrentBookings()[j].getFirstName())
-								&& lastName.equals(system.getFleet()[i].getCurrentBookings()[j].getLastName())
-								&& regOrDate
-										.contentEquals(system.getFleet()[i].getCurrentBookings()[j].getBookingDate())) {
-							System.out.print("Enter kilometers travelled: ");
-							kilometersTravelled = Double.parseDouble(scanner.nextLine());
-							bookingFee = system.getFleet()[i].getCurrentBookings()[j].getBookingFee();
-							tripFee = system.getFleet()[i].getCurrentBookings()[j].completeBooking(kilometersTravelled);
-							System.out.println("\nThank you for riding with MiRide. We hope you enjoyed your trip.");
-							System.out
-									.println("$" + (tripFee + bookingFee) + " has been deducted from your account.\n");
+					} else {
+						for (int j = 0; j < system.getFleet()[i].getCurrentBookings().length; j++) {
+							if (system.getFleet()[i].getCurrentBookings()[j] != null
+									&& firstName.equals(system.getFleet()[i].getCurrentBookings()[j].getFirstName())
+									&& lastName.equals(system.getFleet()[i].getCurrentBookings()[j].getLastName())
+									&& regOrDate.contentEquals(
+											system.getFleet()[i].getCurrentBookings()[j].getBookingDate())) {
+								System.out.print("Enter kilometers travelled: ");
+								kilometersTravelled = Double.parseDouble(scanner.nextLine());
+								bookingFee = system.getFleet()[i].getCurrentBookings()[j].getBookingFee();
+								tripFee = system.getFleet()[i].getCurrentBookings()[j]
+										.completeBooking(kilometersTravelled);
+								System.out
+										.println("\nThank you for riding with MiRide. We hope you enjoyed your trip.");
+								System.out.println(
+										"$" + (tripFee + bookingFee) + " has been deducted from your account.\n");
 
-							// Return to menu
-							this.goBackToMenu(scanner, system);
+								// Return to menu
+								this.goBackToMenu(scanner, system);
+							}
 						}
-					}
 
+					}
 				}
 			}
+		} catch (Exception e) {
+			System.out.println("\nError:  The booking could not be located!\n");
+
+			// Return to menu
+			this.goBackToMenu(scanner, system);
 		}
 
 		System.out.println("\nError:  The booking could not be located!\n");
@@ -498,6 +533,7 @@ public class Menu {
 		// bookings
 
 		if (system.getFleet()[0] == null) {
+			
 			// -------Seed data---------------->
 
 			Car beetle = new Car("BEE123", "Volkswagen", "Beetle", "Justin Beiber", 2);

@@ -12,6 +12,17 @@ import userInterface.Menu;
 public class Driver {
 
 	public static void main(String[] args) {
+		
+		// Please do not press CTRL+SHIFT+F anywhere as it will reformat all the pseudo code
+		
+		/*
+		* ALGORITHM
+		* BEGIN
+		* 	GET menu class
+		* 		RUN menu
+		* 	DISPLAY menu
+		* END
+		*/
 
 		// Create Menu and run it
 

@@ -18,6 +18,8 @@ public class Car {
 	private boolean available;
 	private Booking[] currentBookings = new Booking[5];
 	private Booking[] pastBookings = new Booking[100];
+	
+	// Using public booking method to be able to book easily for seed data
 	public Booking book;
 
 	// By default car is available on a date and every time a pickup date is
@@ -96,6 +98,19 @@ public class Car {
 	// Method to return the details of a car
 
 	public String getDetails() {
+		
+		/*
+		* ALGORITHM
+		* BEGIN
+		* 	GET details of a car
+		* 	COMPUTE car available or not
+		* 		IF car is available for booking
+		* 			SET availability to yes
+		* 		ELSE
+		* 			SET availability to no
+		* 	DISPLAY details
+		* END
+		*/
 
 		// Set variable to print yes or no to the availability field
 
@@ -173,9 +188,13 @@ public class Car {
 		return this.passengerCapacity;
 	}
 
+	// Method to get if its available on a date
+	
 	public boolean isAvailableOnDate() {
 		return availableOnDate;
 	}
+	
+	// Method to set its availability on a date
 
 	public void setAvailableOnDate(boolean availableOnDate) {
 		this.availableOnDate = availableOnDate;

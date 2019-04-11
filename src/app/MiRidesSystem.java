@@ -57,6 +57,16 @@ public class MiRidesSystem {
 	// Method to add car to a fleet
 
 	public void addCarToFleet(Car car) {
+		
+		/*
+		* ALGORITHM
+		* BEGIN
+		* 	LOOP through the array of fleet
+		* 		IF array index is empty
+		* 			ADD car at that index
+		* 	EXIT out of the loop
+		* END
+		*/
 
 		// loop through fleet array to add to next empty space
 
@@ -142,6 +152,8 @@ public class MiRidesSystem {
 							// As cars are found to be not available take that car out of the count for
 							// number of available cars
 							numAvailableCars--;
+						}else {
+							fleet[i].setAvailableOnDate(true);
 						}
 					}
 				}
