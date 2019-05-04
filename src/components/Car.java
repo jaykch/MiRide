@@ -38,7 +38,7 @@ public class Car {
 
 		// Make sure passenger capacity is always greater than 0 and less than 10
 
-		if (passengerCapacity < 0) {
+		if (passengerCapacity <= 0) {
 			this.passengerCapacity = 1;
 		} else if (passengerCapacity > 10) {
 			this.passengerCapacity = 10;
