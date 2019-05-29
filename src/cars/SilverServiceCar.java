@@ -1,5 +1,7 @@
 package cars;
 
+import exception_handling.InvalidRefreshments;
+import java.util.Arrays;
 import utilities.DateTime;
 import utilities.DateUtilities;
 
@@ -15,6 +17,12 @@ public class SilverServiceCar extends Car {
     public SilverServiceCar(String regNo, String make, String model, String driverName, int passengerCapacity,
             double bookingFee, String[] refreshments) {
         super(regNo, make, model, driverName, passengerCapacity);
+        if (refreshments.length < 3) {
+            throw new InvalidRefreshments("ERROR:List Of Refreshments Cannot Be Less Than 3");
+        } else if (CheckForDuplicateItemsInRefreshments(refreshments) == true) {
+            throw new InvalidRefreshments("ERROR:List Of Refreshments Contains Duplicates.");
+        }
+
         //If Booking Fee Is Less Than 3 Then Make it equal to the minimum booking fee 
         if (bookingFee < MINIMUM_BOOKING_FEE) {
             System.out.println("Minimum Fee For SS Car Cannot Be Less Than 3. Setting Fee Equal To 3");
@@ -22,6 +30,7 @@ public class SilverServiceCar extends Car {
         } else {
             this.bookingFee = bookingFee;
         }
+
         this.refreshments = refreshments;
     }
 
@@ -43,9 +52,10 @@ public class SilverServiceCar extends Car {
 
     }
 
+    @Override
     public String getDetails() {
         StringBuilder sb = new StringBuilder();
-        System.out.println(super.getDetails());
+        sb.append(super.getDetails());
         sb.append(String.format("%-15s \n", "Refreshments"));
         for (int i = 0; i < refreshments.length; i++) {
             sb.append(String.format("%-15s %s\n", "Item " + (i + 1) + ":", refreshments[i]));
@@ -68,4 +78,24 @@ public class SilverServiceCar extends Car {
         }
     }
 
+    private boolean CheckForDuplicateItemsInRefreshments(String[] refreshments) {
+        boolean duplicates = false;
+        for (int j = 0; j < refreshments.length; j++) {
+            for (int k = j + 1; k < refreshments.length; k++) {
+                if (k != j && refreshments[k].equalsIgnoreCase(refreshments[j])) {
+                    duplicates = true;
+                }
+            }
+        }
+        return duplicates;
+    }
+
+    public double getBookingFee() {
+        return bookingFee;
+    }
+
+    public void setBookingFee(double bookingFee) {
+        this.bookingFee = bookingFee;
+    }
+    
 }

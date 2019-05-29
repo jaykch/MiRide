@@ -2,6 +2,13 @@ package app;
 
 import cars.Car;
 import cars.SilverServiceCar;
+import exception_handling.InvalidBooking;
+import exception_handling.InvalidDate;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import utilities.DateTime;
 import utilities.MiRidesUtilities;
 
@@ -14,6 +21,7 @@ import utilities.MiRidesUtilities;
 public class MiRideApplication {
 
     private Car[] cars = new Car[15];
+
     private int itemCount = 0;
     private String[] availableCars;
 
@@ -30,8 +38,6 @@ public class MiRideApplication {
             if (serviceType.equals("SD")) {
                 cars[itemCount] = new Car(id, make, model, driverName, numPassengers);
             } else {
-                System.out.println("Refreshments:" + refreshments);
-              
                 cars[itemCount] = new SilverServiceCar(id, make, model, driverName, numPassengers, Fee, refreshments);
             }
             itemCount++;
@@ -42,6 +48,7 @@ public class MiRideApplication {
 
     public String[] book(DateTime dateRequired) {
         int numberOfAvailableCars = 0;
+
         // finds number of available cars to determine the size of the array required.
         for (int i = 0; i < cars.length; i++) {
             if (cars[i] != null) {
@@ -50,6 +57,7 @@ public class MiRideApplication {
                 }
             }
         }
+
         if (numberOfAvailableCars == 0) {
             String[] result = new String[0];
             return result;
@@ -66,12 +74,15 @@ public class MiRideApplication {
                 }
             }
         }
+
         return availableCars;
     }
 
     public String book(String firstName, String lastName, DateTime required, int numPassengers, String registrationNumber) {
+
         Car car = getCarById(registrationNumber);
-        String message;
+        String message = "";
+
         if (car != null) {
 
             boolean isCarBooked = car.book(firstName, lastName, required, numPassengers);
@@ -80,13 +91,13 @@ public class MiRideApplication {
                         + " will pick you up on " + required.getFormattedDate() + ". \n"
                         + "Your booking reference is: " + car.getBookingID(firstName, lastName, required);
                 return message;
-            }
-            else{
-                message ="Error While Booking. Please check that a SS Car can only be booked 3 days in advance";
+            } else {
+                message = "Error While Booking. Please check that a SS Car can only be booked 3 days in advance";
             }
         } else {
             return "Car with registration number: " + registrationNumber + " was not found.";
         }
+
         return message;
     }
 
@@ -146,6 +157,7 @@ public class MiRideApplication {
     }
 
     public String displaySpecificCar(String regNo) {
+        MiRidesUtilities.isRegNoValid(regNo);
         for (int i = 0; i < cars.length; i++) {
             if (cars[i] != null) {
                 if (cars[i].getRegistrationNumber().equals(regNo)) {
@@ -271,12 +283,13 @@ public class MiRideApplication {
         }
         if (carsAvailable == true) {
             for (int i = 0; i < availableCarsToBook.length; i++) {
+
                 sb.append(availableCarsToBook[i].getDetails());
+
             }
         }
 
         return sb.toString();
-
     }
 
     public String displayBooking(String id, String seatId) {
@@ -305,20 +318,20 @@ public class MiRideApplication {
     }
 
     private Car getCarById(String regNo) {
-        Car car = null;
+        //Car car = null;
 
         for (int i = 0; i < cars.length; i++) {
             if (cars[i] != null) {
                 if (cars[i].getRegistrationNumber().equals(regNo)) {
-                    car = cars[i];
-                    return car;
+                    return cars[i];
                 }
             }
         }
-        return car;
+        return null;
     }
 
     public String[] searchForAvailableCars(DateTime dateCarIsNeeded, String typeOfCar) {
+
         int numberOfAvailableCars = 0;
         // finds number of available cars to determine the size of the array required.
         for (int i = 0; i < cars.length; i++) {
@@ -465,5 +478,45 @@ public class MiRideApplication {
             }
         }
         return array;
+    }
+
+    public Car[] getCars() {
+        return cars;
+    }
+
+    public void CheckOutputs() {
+        for (int i = 0; i < cars.length; i++) {
+            if (cars[i] != null) {
+                System.out.println(cars[i].toString());
+            }
+        }
+    }
+    public String GetDataToWrite() {
+        StringBuilder sb=new StringBuilder();
+        for (int i = 0; i < cars.length; i++) {
+            if (cars[i] != null) {
+                sb.append(cars[i].toString()+"\n");
+            }
+        }
+        return sb.toString();
+    }
+
+    public void WriteToTextFile() {
+        FileWriter fileWriter = null;
+        try {
+            fileWriter = new FileWriter("data.txt");
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+            printWriter.print(GetDataToWrite());
+            printWriter.printf("Product name is %s and its price is %d $", "iPhone", 1000);
+            printWriter.close();
+        } catch (IOException ex) {
+            Logger.getLogger(MiRideApplication.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                fileWriter.close();
+            } catch (IOException ex) {
+                Logger.getLogger(MiRideApplication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 }

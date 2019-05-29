@@ -31,6 +31,8 @@ public class Booking {
         this.car = car;
         this.bookingFee = car.getTripFee();
     }
+    
+   
 
     /*
      * Updates the booking record with the kilometers traveled, the booking and trip fee.

@@ -1,7 +1,6 @@
 package cars;
 
-import java.util.ArrayList;
-
+import exception_handling.InvalidBooking;
 import utilities.DateTime;
 import utilities.DateUtilities;
 import utilities.MiRidesUtilities;
@@ -84,9 +83,17 @@ public class Car {
         // Number of passengers does not exceed the passenger capacity and is not zero.
         boolean validPassengerNumber = numberOfPassengersIsValid(numPassengers);
 
+        if (validPassengerNumber == false) {
+            throw new InvalidBooking("Number Of Passengers Exceeds The Available Capacity");
+        }
         // Booking is permissible
         if (available && dateAvailable && dateValid && validPassengerNumber) {
-            tripFee = STANDARD_BOOKING_FEE;
+            if (this instanceof SilverServiceCar) {
+                SilverServiceCar ssCar = (SilverServiceCar) this;
+                tripFee = ssCar.getBookingFee();
+            } else {
+                tripFee = STANDARD_BOOKING_FEE;
+            }
             Booking booking = new Booking(firstName, lastName, required, numPassengers, this);
             currentBookings[bookingSpotAvailable] = booking;
             bookingSpotAvailable++;
@@ -135,10 +142,19 @@ public class Car {
      */
     public boolean isCarBookedOnDate(DateTime dateRequired) {
         boolean carIsBookedOnDate = false;
-        for (int i = 0; i < currentBookings.length; i++) {
-            if (currentBookings[i] != null) {
-                if (DateUtilities.datesAreTheSame(dateRequired, currentBookings[i].getBookingDate())) {
-                    carIsBookedOnDate = true;
+
+        if (DateUtilities.dateIsNotInPast(dateRequired) == false) {
+            throw new InvalidBooking("Date Of Booking Cannot Be Prior To Current Day");
+        } else if (DateUtilities.dateIsNotMoreThan7Days(dateRequired) == false) {
+            throw new InvalidBooking("Date Of Booking Must Be Within The Coming Week");
+        } else if (available == false || notCurrentlyBookedOnDate(dateRequired) == false) {
+            throw new InvalidBooking("The Car Already Has 5 Bookings");
+        } else {
+            for (int i = 0; i < currentBookings.length; i++) {
+                if (currentBookings[i] != null) {
+                    if (DateUtilities.datesAreTheSame(dateRequired, currentBookings[i].getBookingDate())) {
+                        carIsBookedOnDate = true;
+                    }
                 }
             }
         }
@@ -186,13 +202,13 @@ public class Car {
 
         for (int i = 0; i < currentBookings.length; i++) {
             if (currentBookings[i] != null) {
-               sb.append("CURRENT BOOKINGS"+currentBookings[i].getDetails());
+                sb.append("CURRENT BOOKINGS" + currentBookings[i].getDetails());
             }
         }
 
         for (int i = 0; i < pastBookings.length; i++) {
             if (pastBookings[i] != null) {
-                sb.append("PAST BOOKINGS"+pastBookings[i].getDetails());
+                sb.append("PAST BOOKINGS" + pastBookings[i].getDetails());
             }
         }
         return sb.toString();
@@ -203,6 +219,11 @@ public class Car {
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        if (this instanceof SilverServiceCar) {
+            sb.append("SS" + ":");
+        } else {
+            sb.append("SD" + ":");
+        }
         sb.append(regNo + ":" + make + ":" + model);
         if (driverName != null) {
             sb.append(":" + driverName);
@@ -213,16 +234,24 @@ public class Car {
         } else {
             sb.append(":" + "NO");
         }
-        
-        for(int i=0;i<currentBookings.length;i++){
-            sb.append("|"+currentBookings[i].toString());
+        if (this instanceof SilverServiceCar) {
+            SilverServiceCar ssCar = (SilverServiceCar) this;
+            sb.append(":" + ssCar.getBookingFee());
+        } else {
+            sb.append(":" + STANDARD_BOOKING_FEE);
         }
-        
-        for(int i=0;i<pastBookings.length;i++){
-            sb.append("|"+pastBookings[i].toString());
+
+        for (int i = 0; i < currentBookings.length; i++) {
+            if (currentBookings[i] != null) {
+                sb.append("|" + currentBookings[i].toString());
+            }
         }
-        
-        sb.append(":"+STANDARD_BOOKING_FEE);
+
+        for (int i = 0; i < pastBookings.length; i++) {
+            if (pastBookings[i] != null) {
+                sb.append("|" + pastBookings[i].toString());
+            }
+        }
 
         return sb.toString();
     }
@@ -258,14 +287,22 @@ public class Car {
      */
     private String completeBooking(int bookingIndex, double kilometers) {
         Booking booking = currentBookings[bookingIndex];
+        double fee;
         // Remove booking from current bookings array.
         currentBookings[bookingIndex] = null;
 
         // call complete booking on Booking object
         //double kilometersTravelled = Math.random()* 100;
-        double fee = kilometers * (STANDARD_BOOKING_FEE * 0.3);
-        tripFee += fee;
-        booking.completeBooking(kilometers, fee, STANDARD_BOOKING_FEE);
+        if (this instanceof SilverServiceCar) {
+            SilverServiceCar a = (SilverServiceCar) this;
+            fee = kilometers * (a.getBookingFee() * 0.4);
+            tripFee += fee;
+            booking.completeBooking(kilometers, fee, a.getBookingFee());
+        } else {
+            fee = kilometers * (STANDARD_BOOKING_FEE * 0.3);
+            tripFee += fee;
+            booking.completeBooking(kilometers, fee, STANDARD_BOOKING_FEE);
+        }
         // add booking to past bookings
         for (int i = 0; i < pastBookings.length; i++) {
             if (pastBookings[i] == null) {
