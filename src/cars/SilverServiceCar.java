@@ -1,7 +1,6 @@
 package cars;
 
 import exception_handling.InvalidRefreshments;
-import java.util.Arrays;
 import utilities.DateTime;
 import utilities.DateUtilities;
 
@@ -19,7 +18,7 @@ public class SilverServiceCar extends Car {
         super(regNo, make, model, driverName, passengerCapacity);
         if (refreshments.length < 3) {
             throw new InvalidRefreshments("ERROR:List Of Refreshments Cannot Be Less Than 3");
-        } else if (CheckForDuplicateItemsInRefreshments(refreshments) == true) {
+        } else if (checkForDuplicateItemsInRefreshments(refreshments) == true) {
             throw new InvalidRefreshments("ERROR:List Of Refreshments Contains Duplicates.");
         }
 
@@ -78,7 +77,7 @@ public class SilverServiceCar extends Car {
         }
     }
 
-    private boolean CheckForDuplicateItemsInRefreshments(String[] refreshments) {
+    private boolean checkForDuplicateItemsInRefreshments(String[] refreshments) {
         boolean duplicates = false;
         for (int j = 0; j < refreshments.length; j++) {
             for (int k = j + 1; k < refreshments.length; k++) {
@@ -97,5 +96,14 @@ public class SilverServiceCar extends Car {
     public void setBookingFee(double bookingFee) {
         this.bookingFee = bookingFee;
     }
+
+    public String[] getRefreshments() {
+        return refreshments;
+    }
+
+    public void setRefreshments(String[] refreshments) {
+        this.refreshments = refreshments;
+    }
+    
     
 }

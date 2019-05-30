@@ -12,8 +12,8 @@ import utilities.MiRidesUtilities;
 
 /*
  * Class:		Menu
- * Description:	The class a menu and is used to interact with the user. 
- * Author:		Rodney Cocker
+ * Description:	The class with a menu that is used to interact with the user. 
+ * Author:		Jay Kumar
  */
 public class Menu {
 
@@ -30,57 +30,57 @@ public class Menu {
         final int MENU_ITEM_LENGTH = 2;
         String input;
         String choice = "";
-        try{
-        do {
-            printMenu();
+        try {
+            application.restoreDataFromTextFile();
+            do {
+                printMenu();
 
-            input = console.nextLine().toUpperCase();
+                input = console.nextLine().toUpperCase();
 
-            if (input.length() != MENU_ITEM_LENGTH) {
-                System.out.println("Error - selection must be two characters!");
-            } else {
-                System.out.println();
+                if (input.length() != MENU_ITEM_LENGTH) {
+                    System.out.println("Error - selection must be two characters!");
+                } else {
+                    System.out.println();
 
-                switch (input) {
-                    case "CC":
-                        createCar();
-                        break;
-                    case "BC":
-                        book();
-                        break;
-                    case "CB":
-                        completeBooking();
-                        break;
-                    case "DA":
-                        System.out.println("Enter Sort Order (A/D): ");
-                        String sortOrder = console.nextLine().toUpperCase();
-                        System.out.println(application.displayAllBookings(sortOrder));
-                        break;
-                    case "SS":
-                        System.out.print("Enter Registration Number: ");
-                        System.out.println(application.displaySpecificCar(console.nextLine()));
-                        break;
-                    case "SD":
-                        application.seedData();
-                        break;
-                    case "SC":
-                        SearchForAvailableCars();
-                        break;
-                    case "EX":
-                        System.out.println("Exiting Program ... Goodbye!");
-                        System.out.println("");
-                        //application.CheckOutputs();
-                        //application.WriteToTextFile();
-                        System.exit(0);
+                    switch (input) {
+                        case "CC":
+                            createCar();
+                            break;
+                        case "BC":
+                            book();
+                            break;
+                        case "CB":
+                            completeBooking();
+                            break;
+                        case "DA":
+                            System.out.println("Enter Sort Order (A/D): ");
+                            String sortOrder = console.nextLine().toUpperCase();
+                            System.out.println(application.displayAllBookings(sortOrder));
+                            break;
+                        case "SS":
+                            System.out.print("Enter Registration Number: ");
+                            System.out.println(application.displaySpecificCar(console.nextLine()));
+                            break;
+                        case "SD":
+                            application.seedData();
+                            break;
+                        case "SC":
+                            SearchForAvailableCars();
+                            break;
+                        case "EX":
+                            System.out.println("Exiting Program ... Goodbye!");
+                            System.out.println("");
+                            application.writeToTextFile();
+                            System.exit(0);
 
-                    default:
-                        System.out.println("Error, invalid option selected!");
-                        System.out.println("Please try Again...");
+                        default:
+                            System.out.println("Error, invalid option selected!");
+                            System.out.println("Please try Again...");
+                    }
                 }
-            }
 
-        } while (choice != "EX");
-        }catch(InvalidRegID e){
+            } while (choice != "EX");
+        } catch (InvalidRegID e) {
             System.out.println(e.toString());
         }
     }
@@ -277,35 +277,40 @@ public class Menu {
             return regNo;
         }
     }
-
+    
+    /*
+     * Search for All Available Cars in Application.
+     * Searching is done on basis of date which checks if car is available on the
+     * specific date and the type of car.
+     */
     private boolean SearchForAvailableCars() {
-        try{
-        System.out.print("Enter Date Car is Needed (Format DD/MM/YYYY):");
-        String dateNeeded = console.nextLine();
-        if(DateUtilities.CheckDateFormat(dateNeeded)==false){
-            throw new InvalidDate("Wrong Date. Format should be DD/MM/YYYY");
-        }
-        int day = Integer.parseInt(dateNeeded.substring(0, 2));
-        int month = Integer.parseInt(dateNeeded.substring(3, 5));
-        int year = Integer.parseInt(dateNeeded.substring(6));
-        DateTime dateRequired = new DateTime(day, month, year);
-
-        System.out.print("Enter Type Of Car (SD/SS): ");
-        String typeOfCar = console.nextLine();
-        
-        if (!(typeOfCar.equals("SD") | typeOfCar.equals("SS"))){
-             throw new InvalidCarServiceType("Car Service Type Can Only Be SS or SD");
-        }
-
-        String[] availableCars = application.searchForAvailableCars(dateRequired, typeOfCar);
-        if (availableCars.length == 0) {
-            System.out.println("No Cars Available Matching Your Criteria ");
-        } else {
-            for (int i = 0; i < availableCars.length; i++) {
-                System.out.println(availableCars[i]);
+        try {
+            System.out.print("Enter Date Car is Needed (Format DD/MM/YYYY):");
+            String dateNeeded = console.nextLine();
+            if (DateUtilities.CheckDateFormat(dateNeeded) == false) {
+                throw new InvalidDate("Wrong Date. Format should be DD/MM/YYYY");
             }
-        }
-        }catch(InvalidDate | InvalidCarServiceType e){
+            int day = Integer.parseInt(dateNeeded.substring(0, 2));
+            int month = Integer.parseInt(dateNeeded.substring(3, 5));
+            int year = Integer.parseInt(dateNeeded.substring(6));
+            DateTime dateRequired = new DateTime(day, month, year);
+
+            System.out.print("Enter Type Of Car (SD/SS): ");
+            String typeOfCar = console.nextLine();
+
+            if (!(typeOfCar.equals("SD") | typeOfCar.equals("SS"))) {
+                throw new InvalidCarServiceType("Car Service Type Can Only Be SS or SD");
+            }
+
+            String[] availableCars = application.searchForAvailableCars(dateRequired, typeOfCar);
+            if (availableCars.length == 0) {
+                System.out.println("No Cars Available Matching Your Criteria ");
+            } else {
+                for (int i = 0; i < availableCars.length; i++) {
+                    System.out.println(availableCars[i]);
+                }
+            }
+        } catch (InvalidDate | InvalidCarServiceType e) {
             System.out.println(e.toString());
         }
         return true;

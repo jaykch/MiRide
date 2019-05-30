@@ -1,9 +1,12 @@
 package app;
 
+import cars.Booking;
 import cars.Car;
 import cars.SilverServiceCar;
-import exception_handling.InvalidBooking;
-import exception_handling.InvalidDate;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,10 +17,11 @@ import utilities.MiRidesUtilities;
 
 /*
  * Class:			MiRideApplication
- * Description:		The system manager the manages the 
+ * Description:		The system manager that manages the 
  *              	collection of data. 
- * Author:			Rodney Cocker
+ * Author:			Jay Kumar
  */
+
 public class MiRideApplication {
 
     private Car[] cars = new Car[15];
@@ -29,6 +33,9 @@ public class MiRideApplication {
         //seedData();
     }
 
+    /*
+     * Creates cars for use in the system available or booking.
+     */
     public String createCar(String id, String make, String model, String driverName, int numPassengers, String serviceType, double Fee, String[] refreshments) {
         String validId = isValidId(id);
         if (isValidId(id).contains("Error:")) {
@@ -46,6 +53,9 @@ public class MiRideApplication {
         return "Error: Already exists in the system.";
     }
 
+    /*
+     * Is used to get the cars available on the booking date specified by user.
+     */
     public String[] book(DateTime dateRequired) {
         int numberOfAvailableCars = 0;
 
@@ -78,6 +88,9 @@ public class MiRideApplication {
         return availableCars;
     }
 
+    /*
+     * Performs booking of the selected car by user on selected date
+     */
     public String book(String firstName, String lastName, DateTime required, int numPassengers, String registrationNumber) {
 
         Car car = getCarById(registrationNumber);
@@ -101,6 +114,9 @@ public class MiRideApplication {
         return message;
     }
 
+    /*
+     * Searches For Booking To Complete
+     */
     public String completeBooking(String firstName, String lastName, DateTime dateOfBooking, double kilometers) {
         String result = "";
 
@@ -116,6 +132,9 @@ public class MiRideApplication {
         return "Booking not found.";
     }
 
+    /*
+     * Complete Booking For Car
+     */
     public String completeBooking(String firstName, String lastName, String registrationNumber, double kilometers) {
         String carNotFound = "Car not found";
         Car car = null;
@@ -136,6 +155,9 @@ public class MiRideApplication {
         return "Error: Booking not found.";
     }
 
+    /*
+     * Get Booking by using carRegistration Numer
+     */
     public boolean getBookingByName(String firstName, String lastName, String registrationNumber) {
         String bookingNotFound = "Error: Booking not found";
         Car car = null;
@@ -156,6 +178,9 @@ public class MiRideApplication {
         return false;
     }
 
+    /*
+     * Used to display specific car information. SS function on menu
+     */
     public String displaySpecificCar(String regNo) {
         MiRidesUtilities.isRegNoValid(regNo);
         for (int i = 0; i < cars.length; i++) {
@@ -168,6 +193,9 @@ public class MiRideApplication {
         return "Error: The car could not be located.";
     }
 
+    /*
+     * Populates application with data.
+     */
     public boolean seedData() {
         for (int i = 0; i < cars.length; i++) {
             if (cars[i] != null) {
@@ -262,20 +290,23 @@ public class MiRideApplication {
         return true;
     }
 
+    /*
+     * Displays All Bookings in Ascending/Descending Order as specified by user
+     */
     public String displayAllBookings(String sortOrder) {
         Car[] availableCarsToBook;
         boolean carsAvailable = true;
         StringBuilder sb = new StringBuilder();
 
         if (sortOrder.equals("D")) {
-            availableCarsToBook = SortInDescendingOrder();
+            availableCarsToBook = sortInDescendingOrder();
             if (availableCarsToBook.length == 0) {
                 carsAvailable = false;
                 return "No cars are available.";
             }
 
         } else {
-            availableCarsToBook = SortInAscendingOrder();
+            availableCarsToBook = sortInAscendingOrder();
             if (availableCarsToBook.length == 0) {
                 carsAvailable = false;
                 return "No cars are available.";
@@ -292,6 +323,9 @@ public class MiRideApplication {
         return sb.toString();
     }
 
+    /*
+     * Displays booking info using booking ID
+     */
     public String displayBooking(String id, String seatId) {
         Car booking = getCarById(id);
         if (booking == null) {
@@ -300,10 +334,16 @@ public class MiRideApplication {
         return booking.getDetails();
     }
 
+    /*
+     * Checks If Registration Number is valid.
+     */
     public String isValidId(String id) {
         return MiRidesUtilities.isRegNoValid(id);
     }
 
+    /*
+     * Checks If Car Is Present in syste using registration number
+     */
     public boolean checkIfCarExists(String regNo) {
         Car car = null;
         if (regNo.length() != 6) {
@@ -317,6 +357,9 @@ public class MiRideApplication {
         }
     }
 
+    /*
+     * Get Car By ID
+     */
     private Car getCarById(String regNo) {
         //Car car = null;
 
@@ -330,6 +373,9 @@ public class MiRideApplication {
         return null;
     }
 
+    /*
+     * Searches For Available Cars. SA functionality in menu
+     */
     public String[] searchForAvailableCars(DateTime dateCarIsNeeded, String typeOfCar) {
 
         int numberOfAvailableCars = 0;
@@ -372,7 +418,11 @@ public class MiRideApplication {
         return availableCars;
     }
 
-    public Car[] SortInDescendingOrder() {
+    /*
+     * This method sorts the cars to display in Descending order. Used when
+     * displaying all bookings.
+     */
+    public Car[] sortInDescendingOrder() {
         boolean sorted = false;
         int numberOfCars = 0;
         Car temp;
@@ -426,7 +476,11 @@ public class MiRideApplication {
         return array;
     }
 
-    public Car[] SortInAscendingOrder() {
+    /*
+     * This method sorts the cars to display in Ascending order. Used when
+     * displaying all bookings.
+     */
+    public Car[] sortInAscendingOrder() {
         boolean sorted = false;
         int numberOfCars = 0;
         Car temp;
@@ -480,43 +534,294 @@ public class MiRideApplication {
         return array;
     }
 
+    /*
+     * Returns all cars currently in system.
+     */
     public Car[] getCars() {
         return cars;
     }
 
-    public void CheckOutputs() {
+    /*
+     * Get All Data From application to write to data file
+     */
+    public String getDataToWrite() {
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < cars.length; i++) {
             if (cars[i] != null) {
-                System.out.println(cars[i].toString());
-            }
-        }
-    }
-    public String GetDataToWrite() {
-        StringBuilder sb=new StringBuilder();
-        for (int i = 0; i < cars.length; i++) {
-            if (cars[i] != null) {
-                sb.append(cars[i].toString()+"\n");
+                sb.append(cars[i].toString() + "\n");
             }
         }
         return sb.toString();
     }
 
-    public void WriteToTextFile() {
-        FileWriter fileWriter = null;
+    /*
+     * Writes the application data to data file on Exit
+     */
+    public void writeToTextFile() {
+        FileWriter dataFileFileWriter = null;
+        FileWriter backupDataFileFileWriter = null;
+        PrintWriter printWriter = null;
+        removeOldFileBeforeWriting();
         try {
-            fileWriter = new FileWriter("data.txt");
-            PrintWriter printWriter = new PrintWriter(fileWriter);
-            printWriter.print(GetDataToWrite());
-            printWriter.printf("Product name is %s and its price is %d $", "iPhone", 1000);
+            dataFileFileWriter = new FileWriter("data.txt");
+            backupDataFileFileWriter = new FileWriter("backup_data.txt");
+            String dataToWrite = getDataToWrite();
+            printWriter = new PrintWriter(dataFileFileWriter);
+            printWriter.print(dataToWrite);
+            printWriter.close();
+            printWriter = new PrintWriter(backupDataFileFileWriter);
+            printWriter.print(dataToWrite);
             printWriter.close();
         } catch (IOException ex) {
             Logger.getLogger(MiRideApplication.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
-                fileWriter.close();
+                dataFileFileWriter.close();
             } catch (IOException ex) {
                 Logger.getLogger(MiRideApplication.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
+
+    /*
+     * Remove Old Data Before Writing New.
+     */
+    public void removeOldFileBeforeWriting() {
+        File dataFile = new File("data.txt");
+        File backupDataFile = new File("backup_data.txt");
+        if (dataFile.exists()) {
+            dataFile.delete();
+        }
+        if (backupDataFile.exists()) {
+            backupDataFile.delete();
+        }
+    }
+
+    /*
+     * Restore Data from original data file at start of application
+     */
+    public void restoreDataFromTextFile() {
+        BufferedReader br = null;
+        boolean fileFound = true;
+        try {
+            File file = new File("data.txt");
+            br = new BufferedReader(new FileReader(file));
+            if (fileFound == true) {
+                String st;
+                while ((st = br.readLine()) != null) {
+                    parseRecord(st);
+                }
+            }
+
+        } catch (FileNotFoundException ex) {
+            fileFound = false;
+            System.out.println("Data File Not Found. Trying to load from Backup Data File");
+            restoreDataFromBackupTextFile();
+            //Logger.getLogger(MiRideApplication.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(MiRideApplication.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (fileFound == true) {
+                    br.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(MiRideApplication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    /*
+     * Restore Data From Backup Text File. Used If original data file not found
+     */
+    public void restoreDataFromBackupTextFile() {
+        BufferedReader br = null;
+        boolean fileFound = true;
+        try {
+            File file = new File("backup_data.txt");
+            br = new BufferedReader(new FileReader(file));
+            if (fileFound == true) {
+                String st;
+                while ((st = br.readLine()) != null) {
+                    parseRecord(st);
+                }
+                System.out.println("Data Successfully Read From Backup Data File");
+            }
+
+        } catch (FileNotFoundException ex) {
+            fileFound = false;
+            System.out.println("Backup Data File Not Found. Starting Application Without Loading Data");
+        } catch (IOException ex) {
+            Logger.getLogger(MiRideApplication.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (fileFound == true) {
+                    br.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(MiRideApplication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    /*
+     * Parses the record stored in the data file/backup data file so that it can
+     * be inserted into the system.
+     */
+    public void parseRecord(String record) {
+        String actualRecord = "";
+        boolean currentBookingDelimiterFound = false;
+        String currentBookingsDelimiter = "--%--";
+        String pastBookingsDelimiter = "--$--";
+        int startIndexOfCurrentBookingDelimiter = 0;
+        int endIndexOfCurrentBookingDelimiter;
+        int startIndexOfPastBookingDelimiter;
+        int endIndexOfPastBookingDelimiter;
+        String[] pastBookings = null;
+        String[] currentBookings = null;
+        if (record.contains(currentBookingsDelimiter) == false && record.contains(pastBookingsDelimiter) == false) {
+            actualRecord = record;
+            //System.out.println("Actual Record 1:" + actualRecord);
+        } else {
+            if (record.contains(currentBookingsDelimiter)) {
+                currentBookingDelimiterFound = true;
+                startIndexOfCurrentBookingDelimiter = record.indexOf(currentBookingsDelimiter);
+                endIndexOfCurrentBookingDelimiter = record.lastIndexOf(currentBookingsDelimiter);
+
+                actualRecord = record.substring(0, startIndexOfCurrentBookingDelimiter);
+                //System.out.println("Actual Record 2:" + actualRecord);
+                currentBookings = record.substring(startIndexOfCurrentBookingDelimiter + currentBookingsDelimiter.length(), endIndexOfCurrentBookingDelimiter).split("\\|");
+                //System.out.println("CurrentBookings:" + Arrays.toString(currentBookings));
+
+            }
+            if (record.contains(pastBookingsDelimiter)) {
+                startIndexOfPastBookingDelimiter = record.indexOf(pastBookingsDelimiter);
+                endIndexOfPastBookingDelimiter = record.lastIndexOf(pastBookingsDelimiter);
+
+                if (currentBookingDelimiterFound == true) {
+                    actualRecord = record.substring(0, startIndexOfCurrentBookingDelimiter);
+                } else {
+                    actualRecord = record.substring(0, startIndexOfPastBookingDelimiter);
+                }
+                //System.out.println("Actual Record 3:" + actualRecord);
+                pastBookings = record.substring(startIndexOfPastBookingDelimiter + currentBookingsDelimiter.length(), endIndexOfPastBookingDelimiter).split("\\|");
+                //System.out.println("Past Bookings:" + Arrays.toString(pastBookings));
+            }
+        }
+        loadAllDataIntoSystem(actualRecord, currentBookings, pastBookings);
+    }
+
+    /*
+     * Loads the parsed data into the system
+     */
+    public void loadAllDataIntoSystem(String record, String[] currentBookings, String[] pastBookings) {
+        if (currentBookings == null && pastBookings == null) {
+            loadCar(record);
+        } else {
+            loadCar(record);
+            if (currentBookings != null) {
+                loadCurrentBookings(record, currentBookings);
+            }
+            if (pastBookings != null) {
+                loadPastBookings(record, pastBookings);
+            }
+
+        }
+
+    }
+
+    /*
+     * Loads parsed car record into system.
+     */
+    public void loadCar(String record) {
+        String[] temp = record.split(":");
+        if (temp[0].equals("SD")) {
+            createCar(temp[1], temp[2], temp[3], temp[4], Integer.parseInt(temp[5]), temp[0], -1, null);
+        } else {
+            int startIndexOfRefreshments = 8;
+            String[] refreshments = new String[temp.length - startIndexOfRefreshments];
+            for (int i = 0; i < refreshments.length; i++) {
+                refreshments[i] = temp[startIndexOfRefreshments];
+                startIndexOfRefreshments++;
+            }
+            createCar(temp[1], temp[2], temp[3], temp[4], Integer.parseInt(temp[5]), temp[0], Double.parseDouble(temp[7]), refreshments);
+        }
+    }
+
+    /*
+     * Loads parsed current booking records for specific cars into system.
+     */
+    public void loadCurrentBookings(String record, String[] currentBookings) {
+        String[] temp_record = record.split(":");
+        String[] temp_all_current_bookings = cleanBookingArrays(currentBookings);
+
+        for (int i = 0; i < temp_all_current_bookings.length; i++) {
+            String[] temp_current_booking = temp_all_current_bookings[i].split(":");
+            String[] name_of_booker = temp_current_booking[3].split(" ");
+            int day = Integer.parseInt(temp_current_booking[2].substring(0, 2));
+            int month = Integer.parseInt(temp_current_booking[2].substring(2, 4));
+            int year = Integer.parseInt(temp_current_booking[2].substring(4));
+
+            if (temp_record[0].equals("SD")) {
+                Car sdCar = getCarById(temp_record[1]);
+                sdCar.autoBook(name_of_booker[0], name_of_booker[0], new DateTime(day, month, year), Integer.parseInt(temp_current_booking[4]));
+            } else {
+                SilverServiceCar ssCar = (SilverServiceCar) getCarById(temp_record[1]);
+                ssCar.autoBook(name_of_booker[0], name_of_booker[0], new DateTime(day, month, year), Integer.parseInt(temp_current_booking[4]));
+            }
+        }
+    }
+
+    /*
+     * Loads parsed past booking records into system.
+     */
+    public void loadPastBookings(String record, String[] pastBookings) {
+        String[] temp_record = record.split(":");
+        String[] temp_all_past_bookings = cleanBookingArrays(pastBookings);
+
+        for (int i = 0; i < temp_all_past_bookings.length; i++) {
+            String[] temp_past_booking = temp_all_past_bookings[i].split(":");
+            String[] name_of_booker = temp_past_booking[3].split(" ");
+
+            int day = Integer.parseInt(temp_past_booking[2].substring(0, 2));
+            int month = Integer.parseInt(temp_past_booking[2].substring(2, 4));
+            int year = Integer.parseInt(temp_past_booking[2].substring(4));
+
+            if (temp_record[0].equals("SD")) {
+                Car sdCar = getCarById(temp_record[1]);
+                //sdCar.autoBook(name_of_booker[0], name_of_booker[0], new DateTime(day, month, year), Integer.parseInt(temp_current_booking[4]));
+                Booking booking = new Booking(name_of_booker[0], name_of_booker[0], new DateTime(day, month, year), Integer.parseInt(temp_past_booking[4]), sdCar, false);
+                sdCar.autoCompleteBooking(booking, Double.parseDouble(temp_past_booking[5]), Double.parseDouble(temp_past_booking[6]), sdCar.getSTANDARD_BOOKING_FEE());
+
+            } else {
+                SilverServiceCar ssCar = (SilverServiceCar) getCarById(temp_record[1]);
+                Booking booking = new Booking(name_of_booker[0], name_of_booker[0], new DateTime(day, month, year), Integer.parseInt(temp_past_booking[4]), ssCar, false);
+                ssCar.autoCompleteBooking(booking, Double.parseDouble(temp_past_booking[5]), Double.parseDouble(temp_past_booking[6]), ssCar.getBookingFee());
+
+            }
+        }
+    }
+
+    /*
+     * A helper function to clean the bookings arrays when parsed
+     */
+    private String[] cleanBookingArrays(String[] array) {
+        String[] temp_array;
+        int count = 0;
+        for (int i = 0; i < array.length; i++) {
+            if (!array[i].equals("")) {
+                count++;
+            }
+        }
+        temp_array = new String[count];
+        count = 0;
+        for (int i = 0; i < array.length; i++) {
+            if (!array[i].equals("")) {
+                temp_array[count] = array[i];
+                count++;
+            }
+        }
+        return temp_array;
+    }
+
 }

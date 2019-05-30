@@ -2,6 +2,12 @@ package utilities;
 
 import java.util.regex.Pattern;
 
+/*
+ * Class:			DateTime
+ * Description:		Helpful Utilities for working with Dates 
+ * Author:			Rodney Cocker
+ */
+
 public class DateUtilities {
 
     public static boolean dateIsNotInPast(DateTime date) {

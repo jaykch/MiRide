@@ -8,7 +8,7 @@ import utilities.MiRidesUtilities;
 /*
  * Class:		Car
  * Description:	The class represents a car in a ride sharing system. 
- * Author:		Rodney Cocker
+ * Author:		Jay Kumar
  */
 public class Car {
 
@@ -94,12 +94,35 @@ public class Car {
             } else {
                 tripFee = STANDARD_BOOKING_FEE;
             }
-            Booking booking = new Booking(firstName, lastName, required, numPassengers, this);
+            Booking booking = new Booking(firstName, lastName, required, numPassengers, this,true);
             currentBookings[bookingSpotAvailable] = booking;
             bookingSpotAvailable++;
             booked = true;
         }
+        
         return booked;
+    }
+    
+    /*
+     * Used to setup up current bookings for cars when they are loaded from data
+     * file. It skips the validation checks because we know the data will be
+     * correct as it is not input by user but written my the application itself
+     * on the previous run.
+     */
+    public void autoBook(String firstName, String lastName, DateTime required, int numPassengers) {
+        boolean booked = false;
+        
+        // Booking is permissible
+        
+            if (this instanceof SilverServiceCar) {
+                SilverServiceCar ssCar = (SilverServiceCar) this;
+                tripFee = ssCar.getBookingFee();
+            } else {
+                tripFee = STANDARD_BOOKING_FEE;
+            }
+            Booking booking = new Booking(firstName, lastName, required, numPassengers, this,false);
+            currentBookings[bookingSpotAvailable] = booking;
+            bookingSpotAvailable++;
     }
 
     /*
@@ -199,16 +222,18 @@ public class Car {
         } else {
             sb.append(String.format("%-15s %s\n", "Available:", "NO"));
         }
-
+        
+        sb.append("CURRENT BOOKINGS\n");
         for (int i = 0; i < currentBookings.length; i++) {
             if (currentBookings[i] != null) {
-                sb.append("CURRENT BOOKINGS" + currentBookings[i].getDetails());
+                sb.append(currentBookings[i].getDetails());
             }
         }
 
+        sb.append("PAST BOOKINGS\n");
         for (int i = 0; i < pastBookings.length; i++) {
             if (pastBookings[i] != null) {
-                sb.append("PAST BOOKINGS" + pastBookings[i].getDetails());
+                sb.append(pastBookings[i].getDetails());
             }
         }
         return sb.toString();
@@ -219,6 +244,9 @@ public class Car {
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        boolean currentBookingsAdded = false;
+        boolean pastBookingsAdded = false;
+
         if (this instanceof SilverServiceCar) {
             sb.append("SS" + ":");
         } else {
@@ -237,22 +265,40 @@ public class Car {
         if (this instanceof SilverServiceCar) {
             SilverServiceCar ssCar = (SilverServiceCar) this;
             sb.append(":" + ssCar.getBookingFee());
+            for(int i=0;i<ssCar.getRefreshments().length;i++){
+            sb.append(":" +ssCar.getRefreshments()[i]);
+            }
         } else {
             sb.append(":" + STANDARD_BOOKING_FEE);
         }
 
-        for (int i = 0; i < currentBookings.length; i++) {
-            if (currentBookings[i] != null) {
-                sb.append("|" + currentBookings[i].toString());
+        if (checkCurrentBookingsForNonNullValues() == true) {
+            currentBookingsAdded = true;
+            sb.append("--%--");
+            for (int i = 0; i < currentBookings.length; i++) {
+                if (currentBookings[i] != null) {
+                    sb.append("|" + currentBookings[i].toString());
+                }
             }
         }
 
-        for (int i = 0; i < pastBookings.length; i++) {
-            if (pastBookings[i] != null) {
-                sb.append("|" + pastBookings[i].toString());
+        if (currentBookingsAdded == true) {
+            sb.append("--%--");
+        }
+
+        if (checkPastBookingsForNonNullValues() == true) {
+            pastBookingsAdded = true;
+            sb.append("--$--");
+            for (int i = 0; i < pastBookings.length; i++) {
+                if (pastBookings[i] != null) {
+                    sb.append("|" + pastBookings[i].toString());
+                }
             }
         }
 
+        if (pastBookingsAdded == true) {
+            sb.append("--$--");
+        }
         return sb.toString();
     }
 
@@ -294,10 +340,10 @@ public class Car {
         // call complete booking on Booking object
         //double kilometersTravelled = Math.random()* 100;
         if (this instanceof SilverServiceCar) {
-            SilverServiceCar a = (SilverServiceCar) this;
-            fee = kilometers * (a.getBookingFee() * 0.4);
+            SilverServiceCar silverServiceCar = (SilverServiceCar) this;
+            fee = kilometers * (silverServiceCar.getBookingFee() * 0.4);
             tripFee += fee;
-            booking.completeBooking(kilometers, fee, a.getBookingFee());
+            booking.completeBooking(kilometers, fee, silverServiceCar.getBookingFee());
         } else {
             fee = kilometers * (STANDARD_BOOKING_FEE * 0.3);
             tripFee += fee;
@@ -313,6 +359,25 @@ public class Car {
         String result = String.format("Thank you for riding with MiRide.\nWe hope you enjoyed your trip.\n$"
                 + "%.2f has been deducted from your account.", tripFee);
         return result;
+    }
+    
+    /*
+     * Used to setup up past bookings for cars when they are loaded from data
+     * file. It skips the validation checks because we know the data will be
+     * correct as it is not input by user but written my the application itself
+     * on the previous run.
+     */
+    public void autoCompleteBooking(Booking booking,double kilometers,double tripFee,double bookingFee) {
+        
+        booking.completeBooking(kilometers, tripFee, bookingFee);
+        
+        // add booking to past bookings
+        for (int i = 0; i < pastBookings.length; i++) {
+            if (pastBookings[i] == null) {
+                pastBookings[i] = booking;
+                break;
+            }
+        }
     }
 
     /*
@@ -446,6 +511,11 @@ public class Car {
         return regNo;
     }
 
+    public double getSTANDARD_BOOKING_FEE() {
+        return STANDARD_BOOKING_FEE;
+    }
+    
+
     public String getMake() {
         return make;
     }
@@ -464,5 +534,23 @@ public class Car {
 
     public int getBookingSpotAvailable() {
         return bookingSpotAvailable;
+    }
+
+    public boolean checkCurrentBookingsForNonNullValues() {
+        for (int i = 0; i < currentBookings.length; i++) {
+            if (currentBookings[i] != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkPastBookingsForNonNullValues() {
+        for (int i = 0; i < pastBookings.length; i++) {
+            if (pastBookings[i] != null) {
+                return true;
+            }
+        }
+        return false;
     }
 }

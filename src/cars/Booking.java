@@ -6,7 +6,7 @@ import utilities.DateUtilities;
  * Booking Class
  * Represents a booking in a ride sharing system.
  * This class can be used by other objects not just cars.
- * Author: Rodney Cocker
+ * Author: Jay Kumar
  */
 
 public class Booking {
@@ -23,16 +23,20 @@ public class Booking {
 
     private final int NAME_MINIMUM_LENGTH = 3;
 
-    public Booking(String firstName, String lastName, DateTime required, int numPassengers, Car car) {
+    public Booking(String firstName, String lastName, DateTime required, int numPassengers, Car car,boolean shouldValidate) {
         generateId(car.getRegistrationNumber(), firstName, lastName, required);
+        if(shouldValidate==true){
         validateAndSetDate(required);
+        }
+        else{
+            dateBooked=required;
+        }
         validateName(firstName, lastName);
         this.numPassengers = numPassengers;
         this.car = car;
         this.bookingFee = car.getTripFee();
     }
     
-   
 
     /*
      * Updates the booking record with the kilometers traveled, the booking and trip fee.
