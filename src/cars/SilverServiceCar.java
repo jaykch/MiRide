@@ -21,7 +21,7 @@ public class SilverServiceCar extends Car {
         } else if (checkForDuplicateItemsInRefreshments(refreshments) == true) {
             throw new InvalidRefreshments("ERROR:List Of Refreshments Contains Duplicates.");
         }
-
+        // TODO: output done by menu and exception handeled by an exception class
         //If Booking Fee Is Less Than 3 Then Make it equal to the minimum booking fee 
         if (bookingFee < MINIMUM_BOOKING_FEE) {
             System.out.println("Minimum Fee For SS Car Cannot Be Less Than 3. Setting Fee Equal To 3");
@@ -61,6 +61,8 @@ public class SilverServiceCar extends Car {
         }
         return sb.toString();
     }
+    
+    //TODO: add refreshments before booking details
 
     /*
      * Checks that the date is not more than 3 days in the future.
@@ -88,6 +90,8 @@ public class SilverServiceCar extends Car {
         }
         return duplicates;
     }
+    
+    // TODO: change getters and setters to private
 
     public double getBookingFee() {
         return bookingFee;

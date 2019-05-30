@@ -30,6 +30,7 @@ public class Menu {
         final int MENU_ITEM_LENGTH = 2;
         String input;
         String choice = "";
+        //TODO: remove exception from error message
         try {
             application.restoreDataFromTextFile();
             do {
@@ -146,6 +147,8 @@ public class Menu {
             System.out.println("Number Of Passengers Must Be An Integer Value. Standard Fee Must Be A Double");
         }
     }
+    
+    //  TODO: ask for type of car before displaying all(silver service or standard)
 
     /*
      * Book a car by finding available cars for a specified date.
