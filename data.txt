@@ -8,5 +8,5 @@ SS:ABC123:Honda:Civic:John:4:YES:3.5:Pepsi:Chocolates:Walkers
 SS:ABC124:Honda:City:Marcos:4:YES:4.0:Pepsi:Chocolates:Walkers
 SS:ABC125:Honda:Accord:Zofia:4:YES:5.0:Pepsi:Chocolates:Walkers--%--|ABC125CRACOC01062019:5.0:01062019:Craig Cocker:3:0.0:0.0:ABC125--%--
 SS:DEF123:Toyota:Corolla:Tim:4:YES:3.5:Pepsi:Chocolates:Walkers--%--|DEF123CRACOC01062019:3.5:01062019:Craig Cocker:3:0.0:0.0:DEF123--%--
-SS:DEF124:Toyota:Vitz:Amna:4:YES:4.5:Pepsi:Chocolates:Walkers--%--|DEF124CRACOC01062019:4.5:01062019:Craig Cocker:3:0.0:0.0:DEF124--%--
-SS:DEF125:BMW:X1:Munro:4:YES:5.5:Pepsi:Chocolates:Walkers--%--|DEF125CRACOC01062019:5.5:01062019:Craig Cocker:3:0.0:0.0:DEF125--%--
+SS:DEF124:Toyota:Vitz:Amna:4:YES:4.5:Pepsi:Chocolates:Walkers--$--|DEF124CRACOC01062019:4.5:01062019:Craig Cocker:3:75.0:135.0:DEF124--$--
+SS:DEF125:BMW:X1:Munro:4:YES:5.5:Pepsi:Chocolates:Walkers--$--|DEF125CRACOC01062019:5.5:01062019:Craig Cocker:3:75.0:165.0:DEF125--$--

@@ -84,7 +84,7 @@ public class MiRideApplication
 				}
 			} catch (InvalidBooking e)
 			{
-				System.out.println(e.getMessage());
+				
 			}
 		}
 
@@ -257,6 +257,7 @@ public class MiRideApplication
 		{
 			if (cars[i] != null)
 			{
+				System.out.println("Error: There is data already present in the system. Seed Data could not be added! \n");
 				return false;
 			}
 		}
@@ -337,11 +338,11 @@ public class MiRideApplication
 		SilverServiceCar car6 = new SilverServiceCar("DEF125", "BMW", "X1", "Munro", 4, 5.5, refreshments);
 		cars[itemCount] = car5;
 		car5.book("Craig", "Cocker", new DateTime(1), 3);
-		car5.completeBooking("Rodney", "Cocker", new DateTime(1), 75);
+		car5.completeBooking("Craig", "Cocker", new DateTime(1), 75);
 		itemCount++;
 		cars[itemCount] = car6;
 		car6.book("Craig", "Cocker", new DateTime(1), 3);
-		car6.completeBooking("Rodney", "Cocker", new DateTime(1), 75);
+		car6.completeBooking("Craig", "Cocker", new DateTime(1), 75);
 		itemCount++;
 
 		return true;

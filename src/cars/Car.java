@@ -237,7 +237,9 @@ public class Car {
     
     public String getCurrentBookingsDetails(){
         StringBuilder sb = new StringBuilder();
-        sb.append("CURRENT BOOKINGS\n");
+        if(currentBookings[0] != null) {
+            sb.append("CURRENT BOOKINGS\n");
+        }
         for (int i = 0; i < currentBookings.length; i++) {
             if (currentBookings[i] != null) {
                 sb.append(currentBookings[i].getDetails());
@@ -248,7 +250,9 @@ public class Car {
     
     public String getPastBookingsDetails(){
         StringBuilder sb = new StringBuilder();
-        sb.append("PAST BOOKINGS\n");
+        if(pastBookings[0] != null) {
+            sb.append("PAST BOOKINGS\n");
+        }
         for (int i = 0; i < pastBookings.length; i++) {
             if (pastBookings[i] != null) {
                 sb.append(pastBookings[i].getDetails());

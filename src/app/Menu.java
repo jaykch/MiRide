@@ -182,12 +182,12 @@ public class Menu
 	{
 		try
 		{
-			System.out.println("Enter date car required: ");
+			System.out.println("Enter date car is required: ");
 			System.out.println("format DD/MM/YYYY)");
 			String dateEntered = console.nextLine();
 			if (DateUtilities.CheckDateFormat(dateEntered) == false)
 			{
-				throw new InvalidDate("Wrong Date or Wrong Format.Enter Date In The Following Format DD/MM/YYYY");
+				throw new InvalidDate("Wrong Date or Wrong Format. Enter Date In The Following Format DD/MM/YYYY");
 			}
 			int day = Integer.parseInt(dateEntered.substring(0, 2));
 			int month = Integer.parseInt(dateEntered.substring(3, 5));
@@ -259,7 +259,7 @@ public class Menu
 				System.out.println(result);
 			} else
 			{
-				MiRidesUtilities.isRegNoValid(result);
+				MiRidesUtilities.isRegNoValid(response);
 
 				System.out.print("Enter First Name:");
 				String firstName = console.nextLine();
