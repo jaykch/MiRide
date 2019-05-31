@@ -3,19 +3,24 @@ package exception_handling;
 /*
  * Class:			InvalidBooking
  * Description:		Exception Class For Invalid Booking 
- * Author:			Jay Kumar
+ * Author:			Jay Kumar - S3770282
  */
 
-public class InvalidBooking extends RuntimeException {
-    String errorMessage;
-    public InvalidBooking(String errorMessage) {
-        this.errorMessage=errorMessage;
-    }
+public class InvalidBooking extends RuntimeException
+{
 
-    @Override
-    public String getMessage() {
-        return "Error: "+ errorMessage; //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    
+	// String to store error message
+	String errorMessage;
+
+	public InvalidBooking(String errorMessage)
+	{
+		this.errorMessage = errorMessage;
+	}
+
+	@Override // and display error message
+	public String getMessage()
+	{
+		return "Error: " + errorMessage;
+	}
+
 }

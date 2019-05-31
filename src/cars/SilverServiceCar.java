@@ -5,104 +5,131 @@ import exception_handling.SilverServiceCarMinimumBookingFee;
 import utilities.DateTime;
 import utilities.DateUtilities;
 
-public class SilverServiceCar extends Car {
+/*
+* Class: 		Car
+* Description: 	This is a subclass of car class and is used to create silver service type cars
+* 				with additional functionality and attributes.
+* Author: 		Jay Kumar - S3770282
+*/
 
-    // Silver service car attributes
-    
-    private String[] refreshments;
+public class SilverServiceCar extends Car
+{
 
-    // Constants
-    private final double MINIMUM_BOOKING_FEE = 3.0;
+	// Silver service car attributes
 
-    public SilverServiceCar(String regNo, String make, String model, String driverName, int passengerCapacity,
-            double bookingFee, String[] refreshments) {
-        super(regNo, make, model, driverName, passengerCapacity);
-        if (refreshments.length < 3) {
-            throw new InvalidRefreshments("List Of Refreshments Cannot Be Less Than 3");
-        } else if (CheckForDuplicateItemsInRefreshments(refreshments) == true) {
-            throw new InvalidRefreshments("List Of Refreshments Contains Duplicates.");
-        }
+	private String[] refreshments;
 
-        //If Booking Fee Is Less Than 3 Then Make it equal to the minimum booking fee 
-        
-        if (bookingFee < MINIMUM_BOOKING_FEE) {
-            throw new SilverServiceCarMinimumBookingFee("Minimum Fee For SS Car Cannot Be Less Than 3. No Car Added");
-        } else {
-            super.setBookingFee(bookingFee);
-        }
+	// Constants
+	private final double MINIMUM_BOOKING_FEE = 3.0;
 
-        this.refreshments = refreshments;
-    }
+	public SilverServiceCar(String regNo, String make, String model, String driverName, int passengerCapacity,
+			double bookingFee, String[] refreshments)
+	{
+		super(regNo, make, model, driverName, passengerCapacity);
+		if (refreshments.length < 3)
+		{
+			throw new InvalidRefreshments("List Of Refreshments Cannot Be Less Than 3");
+		} else if (CheckForDuplicateItemsInRefreshments(refreshments) == true)
+		{
+			throw new InvalidRefreshments("List Of Refreshments Contains Duplicates.");
+		}
 
-    @Override
-    public boolean book(String firstName, String lastName, DateTime required, int numPassengers) {
+		// If Booking Fee Is Less Than 3 Then Make it equal to the minimum booking fee
 
-        boolean booked = false;
+		if (bookingFee < MINIMUM_BOOKING_FEE)
+		{
+			throw new SilverServiceCarMinimumBookingFee("Minimum Fee For SS Car Cannot Be Less Than 3. No Car Added");
+		} else
+		{
+			super.setBookingFee(bookingFee);
+		}
 
-        // Date is not more than 3 days ahead
-        boolean dateValid = dateIsValid(required);
+		this.refreshments = refreshments;
+	}
 
-        if (dateValid) {
-            if (super.book(firstName, lastName, required, numPassengers) == true) {;
-                booked = true;
-            }
-        }
+	@Override
+	public boolean book(String firstName, String lastName, DateTime required, int numPassengers)
+	{
 
-        return booked;
+		boolean booked = false;
 
-    }
+		// Date is not more than 3 days ahead
+		boolean dateValid = dateIsValid(required);
 
-    @Override
-    public String getDetails() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.getCarDetails());
-        sb.append(getRefreshmentDetails());
-        sb.append(super.getCurrentBookingsDetails());
-        sb.append(super.getPastBookingsDetails());
-        return sb.toString();
-    }
-    
-    public String getRefreshmentDetails(){
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%-15s \n", "Refreshments"));
-        for (int i = 0; i < refreshments.length; i++) {
-            sb.append(String.format("%-15s %s\n", "Item " + (i + 1) + ":", refreshments[i]));
-        }
-        return sb.toString();
-    }
+		if (dateValid)
+		{
+			if (super.book(firstName, lastName, required, numPassengers) == true)
+			{
+				;
+				booked = true;
+			}
+		}
 
-    /*
-     * Checks that the date is not more than 3 days in the future.
-     */
-    private boolean dateIsValid(DateTime date) {
-        return DateUtilities.dateIsNotMoreThan3Days(date);
-    }
+		return booked;
 
-    private boolean bookingFeeIsValid() {
-        if (super.getBookingFee() >= 3) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+	}
 
-    private boolean CheckForDuplicateItemsInRefreshments(String[] refreshments) {
-        boolean duplicates = false;
-        for (int j = 0; j < refreshments.length; j++) {
-            for (int k = j + 1; k < refreshments.length; k++) {
-                if (k != j && refreshments[k].equalsIgnoreCase(refreshments[j])) {
-                    duplicates = true;
-                }
-            }
-        }
-        return duplicates;
-    }
+	@Override
+	public String getDetails()
+	{
 
-    
+		/*
+		* ALGORITHM
+		* BEGIN
+		* 	GET details of a car from super class
+		* 	GET details of refreshments
+		* 	GET details of current bookings from super class
+		* 	GET details of past bookings from super class
+		* 	DISPLAY details
+		* END
+		*/
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.getCarDetails());
+		sb.append(getRefreshmentDetails());
+		sb.append(super.getCurrentBookingsDetails());
+		sb.append(super.getPastBookingsDetails());
+		return sb.toString();
+	}
 
-    public String[] getRefreshments() {
-        return refreshments;
-    }
+	public String getRefreshmentDetails()
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append(String.format("%-15s \n", "Refreshments"));
+		for (int i = 0; i < refreshments.length; i++)
+		{
+			sb.append(String.format("%-15s %s\n", "Item " + (i + 1) + ":", refreshments[i]));
+		}
+		return sb.toString();
+	}
 
+	/*
+	 * Checks that the date is not more than 3 days in the future.
+	 */
+	private boolean dateIsValid(DateTime date)
+	{
+		return DateUtilities.dateIsNotMoreThan3Days(date);
+	}
+
+	private boolean CheckForDuplicateItemsInRefreshments(String[] refreshments)
+	{
+		boolean duplicates = false;
+		for (int j = 0; j < refreshments.length; j++)
+		{
+			for (int k = j + 1; k < refreshments.length; k++)
+			{
+				if (k != j && refreshments[k].equalsIgnoreCase(refreshments[j]))
+				{
+					duplicates = true;
+				}
+			}
+		}
+		return duplicates;
+	}
+
+	public String[] getRefreshments()
+	{
+		return refreshments;
+	}
 
 }

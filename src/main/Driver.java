@@ -7,12 +7,22 @@ import app.Menu;
  * Description:		Main Driver Class to Start Application 
  * Author:			Jay Kumar
  */
-public class Driver {
+public class Driver
+{
 
-    public static void main(String[] args) {
-        
-        Menu menu = new Menu();
-        menu.run();
-    }
+	public static void main(String[] args)
+	{
+
+		/*
+		* ALGORITHM
+		* BEGIN
+		* 	INSTANTIATE Menu class
+		* 	RUN menu class run method
+		* END
+		*/
+		
+		Menu menu = new Menu();
+		menu.run();
+	}
 
 }

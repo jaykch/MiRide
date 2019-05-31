@@ -2,21 +2,24 @@ package exception_handling;
 
 /*
  * Class:			SilverServiceCarMinimumBookingFee
- * Description:		Exception Class For InvalidRegID 
- * Author:			Jay Kumar
+ * Description:		Exception Class For Minimum Booking Fee for Silver Service Car 
+ * Author:			Jay Kumar - S3770282
  */
-public class SilverServiceCarMinimumBookingFee extends RuntimeException {
+public class SilverServiceCarMinimumBookingFee extends RuntimeException
+{
+	// String to store error message
+	String errorMessage;
 
-    String errorMessage;
+	public SilverServiceCarMinimumBookingFee(String errorMessage)
+	{
 
-    public SilverServiceCarMinimumBookingFee(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
 
-        this.errorMessage = errorMessage;
-    }
-
-    @Override
-    public String getMessage() {
-        return "Error: " + errorMessage; //To change body of generated methods, choose Tools | Templates.
-    }
+	@Override // and display error message
+	public String getMessage()
+	{
+		return "Error: " + errorMessage;
+	}
 
 }

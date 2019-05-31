@@ -1,16 +1,17 @@
 package cars;
 
 import exception_handling.InvalidBooking;
-import java.util.Arrays;
 import utilities.DateTime;
 import utilities.DateUtilities;
 import utilities.MiRidesUtilities;
 
 /*
- * Class:		Car
- * Description:	The class represents a car in a ride sharing system. 
- * Author:		Jay Kumar
- */
+* Class: 		Car
+* Description: 	This class represents a single record for any car 
+* 				that can be created.
+* Author: 		Jay Kumar - S3770282
+*/
+
 public class Car {
 
     // Car attributes
@@ -52,30 +53,32 @@ public class Car {
      * standard booking fee.
      */
 
-    /*
-     * ALGORITHM
-     * BEGIN
-     *  CHECK if car has five booking 
-     *  CHECK if car has a booking on date requested	
-     *  CHECK if the date requested is in the past. 
-     *  CHECK if the number of passengers requested exceeds the capacity of the car. 
-     * 	IF any checks fail
-     *      return false to indicate the booking operation failed
-     *  ELSE
-     *      CREATE the booking
-     *      ADD the booking to the current booking array 
-     * 	    UPDATE the available status if there are now five current bookings.	
-     * 	    RETURN true to indicate the success of the booking.	
-     * END
-     * 
-     * TEST
-     *  Booking a car to carry 0, 10, & within/without passenger capacity.
-     *  Booking car on date prior to today
-     *  Booking a car on a date that is more than 7 days in advance.
-     *  Booking car on a date for which it is already booked
-     *  Booking six cars
-     */
     public boolean book(String firstName, String lastName, DateTime required, int numPassengers) {
+    	
+    	/*
+         * ALGORITHM
+         * BEGIN
+         *  CHECK if car is available 
+         *  CHECK if car has a booking on date requested	
+         *  CHECK if the date requested is in the past. 
+         *  CHECK if the number of passengers requested exceeds the capacity of the car. 
+         * 	IF any checks fail
+         *      return false to indicate the booking operation failed
+         *  ELSE
+         *      CREATE the booking
+         *      ADD the booking to the current booking array 
+         * 	    UPDATE the available status if there are now five current bookings.	
+         * 	    RETURN true to indicate the success of the booking.	
+         * END
+         * 
+         * TEST
+         *  Booking a car to carry 0, 10, & within/without passenger capacity.
+         *  Booking car on date prior to today
+         *  Booking a car on a date that is more than 7 days in advance.
+         *  Booking car on a date for which it is already booked
+         *  Booking six cars
+         */
+    	
         boolean booked = false;
         // Does car have five bookings
         available = bookingAvailable();
@@ -111,9 +114,7 @@ public class Car {
      * correct as it is not input by user but written my the application itself
      * on the previous run.
      */
-    public void autoBook(String firstName, String lastName, DateTime required, int numPassengers) {
-        boolean booked = false;
-        
+    public void autoBook(String firstName, String lastName, DateTime required, int numPassengers) {        
         // Booking is permissible
         
             if (this instanceof SilverServiceCar) {
@@ -330,19 +331,6 @@ public class Car {
 
     public double getTripFee() {
         return tripFee;
-    }
-
-    /*
-     * Checks to see if any past bookings have been recorded
-     */
-    private boolean hasBookings(Booking[] bookings) {
-        boolean found = false;
-        for (int i = 0; i < bookings.length; i++) {
-            if (bookings[i] != null) {
-                found = true;
-            }
-        }
-        return found;
     }
 
     /*
