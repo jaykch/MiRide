@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 /*
  * Class:			DateTime
- * Description:		Helpful Utilities for working with Dates 
+ * Description:		Helful Utilities for working with Dates 
  * Author:			Rodney Cocker
  */
 

@@ -1,16 +1,17 @@
 package exception_handling;
 
 /*
- * Class:			InvalidDate
- * Description:		Exception Class For InvalidDate 
+ * Class:			InvalidRegID
+ * Description:		Exception Class For InvalidRegID 
  * Author:			Jay Kumar
  */
 
-public class InvalidDate extends Exception {
+public class InvalidSortOrder extends Exception {
     String errorMessage;
-    public InvalidDate(String errorMessage){
+    public InvalidSortOrder(String errorMessage){
         this.errorMessage=errorMessage;
     }
+    
     
     @Override
     public String getMessage() {

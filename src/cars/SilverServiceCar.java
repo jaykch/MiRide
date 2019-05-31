@@ -1,13 +1,14 @@
 package cars;
 
 import exception_handling.InvalidRefreshments;
+import exception_handling.SilverServiceCarMinimumBookingFee;
 import utilities.DateTime;
 import utilities.DateUtilities;
 
 public class SilverServiceCar extends Car {
 
     // Silver service car attributes
-    private double bookingFee;
+    
     private String[] refreshments;
 
     // Constants
@@ -17,17 +18,17 @@ public class SilverServiceCar extends Car {
             double bookingFee, String[] refreshments) {
         super(regNo, make, model, driverName, passengerCapacity);
         if (refreshments.length < 3) {
-            throw new InvalidRefreshments("ERROR:List Of Refreshments Cannot Be Less Than 3");
-        } else if (checkForDuplicateItemsInRefreshments(refreshments) == true) {
-            throw new InvalidRefreshments("ERROR:List Of Refreshments Contains Duplicates.");
+            throw new InvalidRefreshments("List Of Refreshments Cannot Be Less Than 3");
+        } else if (CheckForDuplicateItemsInRefreshments(refreshments) == true) {
+            throw new InvalidRefreshments("List Of Refreshments Contains Duplicates.");
         }
-        // TODO: output done by menu and exception handeled by an exception class
+
         //If Booking Fee Is Less Than 3 Then Make it equal to the minimum booking fee 
+        
         if (bookingFee < MINIMUM_BOOKING_FEE) {
-            System.out.println("Minimum Fee For SS Car Cannot Be Less Than 3. Setting Fee Equal To 3");
-            this.bookingFee = MINIMUM_BOOKING_FEE;
+            throw new SilverServiceCarMinimumBookingFee("Minimum Fee For SS Car Cannot Be Less Than 3. No Car Added");
         } else {
-            this.bookingFee = bookingFee;
+            super.setBookingFee(bookingFee);
         }
 
         this.refreshments = refreshments;
@@ -54,15 +55,21 @@ public class SilverServiceCar extends Car {
     @Override
     public String getDetails() {
         StringBuilder sb = new StringBuilder();
-        sb.append(super.getDetails());
+        sb.append(super.getCarDetails());
+        sb.append(getRefreshmentDetails());
+        sb.append(super.getCurrentBookingsDetails());
+        sb.append(super.getPastBookingsDetails());
+        return sb.toString();
+    }
+    
+    public String getRefreshmentDetails(){
+        StringBuilder sb = new StringBuilder();
         sb.append(String.format("%-15s \n", "Refreshments"));
         for (int i = 0; i < refreshments.length; i++) {
             sb.append(String.format("%-15s %s\n", "Item " + (i + 1) + ":", refreshments[i]));
         }
         return sb.toString();
     }
-    
-    //TODO: add refreshments before booking details
 
     /*
      * Checks that the date is not more than 3 days in the future.
@@ -72,14 +79,14 @@ public class SilverServiceCar extends Car {
     }
 
     private boolean bookingFeeIsValid() {
-        if (this.bookingFee >= 3) {
+        if (super.getBookingFee() >= 3) {
             return true;
         } else {
             return false;
         }
     }
 
-    private boolean checkForDuplicateItemsInRefreshments(String[] refreshments) {
+    private boolean CheckForDuplicateItemsInRefreshments(String[] refreshments) {
         boolean duplicates = false;
         for (int j = 0; j < refreshments.length; j++) {
             for (int k = j + 1; k < refreshments.length; k++) {
@@ -90,24 +97,12 @@ public class SilverServiceCar extends Car {
         }
         return duplicates;
     }
+
     
-    // TODO: change getters and setters to private
-
-    public double getBookingFee() {
-        return bookingFee;
-    }
-
-    public void setBookingFee(double bookingFee) {
-        this.bookingFee = bookingFee;
-    }
 
     public String[] getRefreshments() {
         return refreshments;
     }
 
-    public void setRefreshments(String[] refreshments) {
-        this.refreshments = refreshments;
-    }
-    
-    
+
 }

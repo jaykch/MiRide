@@ -7,7 +7,14 @@ package exception_handling;
  */
 
 public class InvalidCarServiceType extends Exception{
+    String errorMessage;
+    
     public InvalidCarServiceType(String errorMessage){
-        super(errorMessage);
+        this.errorMessage=errorMessage;
+    }
+    
+    @Override
+    public String getMessage() {
+        return "Error: " + errorMessage; //To change body of generated methods, choose Tools | Templates.
     }
 }

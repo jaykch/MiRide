@@ -5,6 +5,7 @@ import exception_handling.InvalidCarServiceType;
 import exception_handling.InvalidDate;
 import exception_handling.InvalidRefreshments;
 import exception_handling.InvalidRegID;
+import exception_handling.SilverServiceCarMinimumBookingFee;
 import java.util.Scanner;
 import utilities.DateTime;
 import utilities.DateUtilities;
@@ -12,7 +13,7 @@ import utilities.MiRidesUtilities;
 
 /*
  * Class:		Menu
- * Description:	The class with a menu that is used to interact with the user. 
+ * Description:	The class a menu and is used to interact with the user. 
  * Author:		Jay Kumar
  */
 public class Menu {
@@ -30,7 +31,6 @@ public class Menu {
         final int MENU_ITEM_LENGTH = 2;
         String input;
         String choice = "";
-        //TODO: remove exception from error message
         try {
             application.restoreDataFromTextFile();
             do {
@@ -54,9 +54,13 @@ public class Menu {
                             completeBooking();
                             break;
                         case "DA":
+
+                            System.out.println("Enter Car Type (SD/SS): ");
+                            String serviceType = console.nextLine().toUpperCase();
                             System.out.println("Enter Sort Order (A/D): ");
                             String sortOrder = console.nextLine().toUpperCase();
-                            System.out.println(application.displayAllBookings(sortOrder));
+
+                            System.out.println(application.displayAllBookings(sortOrder,serviceType));
                             break;
                         case "SS":
                             System.out.print("Enter Registration Number: ");
@@ -82,7 +86,7 @@ public class Menu {
 
             } while (choice != "EX");
         } catch (InvalidRegID e) {
-            System.out.println(e.toString());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -114,7 +118,7 @@ public class Menu {
                 numPassengers = Integer.parseInt(console.nextLine());
 
                 System.out.println("Enter Service Type (SD/SS): ");
-                serviceType = console.nextLine();
+                serviceType = console.nextLine().toUpperCase();
 
                 if (serviceType.equals("SD")) {
                     isSilverServiceCar = false;
@@ -141,14 +145,12 @@ public class Menu {
                     System.out.println("Error - Already exists in the system");
                 }
             }
-        } catch (InvalidRefreshments | InvalidRegID | InvalidCarServiceType e) {
-            System.out.println(e.toString());
+        } catch (InvalidRefreshments | InvalidRegID | InvalidCarServiceType | SilverServiceCarMinimumBookingFee e) {
+            System.out.println(e.getMessage());
         } catch (NumberFormatException e) {
             System.out.println("Number Of Passengers Must Be An Integer Value. Standard Fee Must Be A Double");
         }
     }
-    
-    //  TODO: ask for type of car before displaying all(silver service or standard)
 
     /*
      * Book a car by finding available cars for a specified date.
@@ -189,7 +191,7 @@ public class Menu {
                 System.out.println("There are no available cars on this date.");
             }
         } catch (InvalidBooking | InvalidDate e) {
-            System.out.println(e.toString());
+            System.out.println(e.getMessage());
         }
         return true;
     }
@@ -238,7 +240,7 @@ public class Menu {
                 }
             }
         } catch (InvalidDate | InvalidRegID e) {
-            System.out.println(e.toString());
+            System.out.println(e.getMessage());
         }
 
     }
@@ -256,7 +258,7 @@ public class Menu {
             return console.nextLine();
         } else {
             while (!validRegistrationNumber) {
-                regNo = console.nextLine();
+                regNo = console.nextLine().toUpperCase();
                 boolean exists = application.checkIfCarExists(regNo);
                 if (exists) {
                     // Empty string means the menu will not try to process
@@ -280,7 +282,7 @@ public class Menu {
             return regNo;
         }
     }
-    
+
     /*
      * Search for All Available Cars in Application.
      * Searching is done on basis of date which checks if car is available on the
@@ -314,7 +316,7 @@ public class Menu {
                 }
             }
         } catch (InvalidDate | InvalidCarServiceType e) {
-            System.out.println(e.toString());
+            System.out.println(e.getMessage());
         }
         return true;
     }

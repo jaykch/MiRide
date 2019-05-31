@@ -161,48 +161,25 @@ public class Booking {
         }
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public DateTime getDateBooked() {
         return dateBooked;
     }
 
-    public void setDateBooked(DateTime dateBooked) {
-        this.dateBooked = dateBooked;
-    }
 
     public int getNumPassengers() {
         return numPassengers;
-    }
-
-    public void setNumPassengers(int numPassengers) {
-        this.numPassengers = numPassengers;
     }
 
     public double getBookingFee() {
         return bookingFee;
     }
 
-    public void setBookingFee(double bookingFee) {
-        this.bookingFee = bookingFee;
-    }
-
     public double getKilometersTravelled() {
         return kilometersTravelled;
     }
 
-    public void setKilometersTravelled(double kilometersTravelled) {
-        this.kilometersTravelled = kilometersTravelled;
-    }
-
     public double getTripFee() {
         return tripFee;
-    }
-
-    public void setTripFee(double tripFee) {
-        this.tripFee = tripFee;
     }
 
     public Car getCar() {

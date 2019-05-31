@@ -1,6 +1,7 @@
 package cars;
 
 import exception_handling.InvalidBooking;
+import java.util.Arrays;
 import utilities.DateTime;
 import utilities.DateUtilities;
 import utilities.MiRidesUtilities;
@@ -18,6 +19,7 @@ public class Car {
     private String model;
     private String driverName;
     private int passengerCapacity;
+    private double bookingFee;
 
     // Tracking bookings
     private Booking[] currentBookings;
@@ -165,13 +167,12 @@ public class Car {
      */
     public boolean isCarBookedOnDate(DateTime dateRequired) {
         boolean carIsBookedOnDate = false;
-
         if (DateUtilities.dateIsNotInPast(dateRequired) == false) {
             throw new InvalidBooking("Date Of Booking Cannot Be Prior To Current Day");
         } else if (DateUtilities.dateIsNotMoreThan7Days(dateRequired) == false) {
             throw new InvalidBooking("Date Of Booking Must Be Within The Coming Week");
         } else if (available == false || notCurrentlyBookedOnDate(dateRequired) == false) {
-            throw new InvalidBooking("The Car Already Has 5 Bookings");
+            throw new InvalidBooking(this.getRegNo()+" Already Has 5 Bookings");
         } else {
             for (int i = 0; i < currentBookings.length; i++) {
                 if (currentBookings[i] != null) {
@@ -209,6 +210,14 @@ public class Car {
     public String getDetails() {
         StringBuilder sb = new StringBuilder();
 
+        sb.append(getCarDetails());
+        sb.append(getCurrentBookingsDetails());
+        sb.append(getPastBookingsDetails());
+        return sb.toString();
+    }
+    
+    public String getCarDetails(){
+        StringBuilder sb = new StringBuilder();
         sb.append(getRecordMarker());
         sb.append(String.format("%-15s %s\n", "Reg No:", this.regNo));
         sb.append(String.format("%-15s %s\n", "Make & Model:", this.make + " " + this.model));
@@ -222,14 +231,22 @@ public class Car {
         } else {
             sb.append(String.format("%-15s %s\n", "Available:", "NO"));
         }
-        
+        return sb.toString();
+    }
+    
+    public String getCurrentBookingsDetails(){
+        StringBuilder sb = new StringBuilder();
         sb.append("CURRENT BOOKINGS\n");
         for (int i = 0; i < currentBookings.length; i++) {
             if (currentBookings[i] != null) {
                 sb.append(currentBookings[i].getDetails());
             }
         }
-
+        return sb.toString();
+    }
+    
+    public String getPastBookingsDetails(){
+        StringBuilder sb = new StringBuilder();
         sb.append("PAST BOOKINGS\n");
         for (int i = 0; i < pastBookings.length; i++) {
             if (pastBookings[i] != null) {
@@ -552,5 +569,12 @@ public class Car {
             }
         }
         return false;
+    }
+    public double getBookingFee() {
+        return bookingFee;
+    }
+
+    protected void setBookingFee(double bookingFee) {
+        this.bookingFee = bookingFee;
     }
 }

@@ -3,6 +3,9 @@ package app;
 import cars.Booking;
 import cars.Car;
 import cars.SilverServiceCar;
+import exception_handling.InvalidBooking;
+import exception_handling.InvalidCarServiceType;
+import exception_handling.InvalidSortOrder;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,6 +13,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utilities.DateTime;
@@ -17,11 +21,10 @@ import utilities.MiRidesUtilities;
 
 /*
  * Class:			MiRideApplication
- * Description:		The system manager that manages the 
+ * Description:		The system manager the manages the 
  *              	collection of data. 
  * Author:			Jay Kumar
  */
-
 public class MiRideApplication {
 
     private Car[] cars = new Car[15];
@@ -58,13 +61,18 @@ public class MiRideApplication {
      */
     public String[] book(DateTime dateRequired) {
         int numberOfAvailableCars = 0;
+        boolean bookingValid = true;
 
         // finds number of available cars to determine the size of the array required.
         for (int i = 0; i < cars.length; i++) {
-            if (cars[i] != null) {
-                if (!cars[i].isCarBookedOnDate(dateRequired)) {
-                    numberOfAvailableCars++;
+            try {
+                if (cars[i] != null) {
+                    if (!cars[i].isCarBookedOnDate(dateRequired)) {
+                        numberOfAvailableCars++;
+                    }
                 }
+            }catch(InvalidBooking e){
+                System.out.println(e.getMessage());
             }
         }
 
@@ -75,14 +83,19 @@ public class MiRideApplication {
         availableCars = new String[numberOfAvailableCars];
         int availableCarsIndex = 0;
         // Populate available cars with registration numbers
-        for (int i = 0; i < cars.length; i++) {
 
-            if (cars[i] != null) {
-                if (!cars[i].isCarBookedOnDate(dateRequired)) {
-                    availableCars[availableCarsIndex] = availableCarsIndex + 1 + ". " + cars[i].getRegistrationNumber();
-                    availableCarsIndex++;
+        for (int i = 0; i < cars.length; i++) {
+            try {
+                if (cars[i] != null) {
+                    if (!cars[i].isCarBookedOnDate(dateRequired)) {
+                        availableCars[availableCarsIndex] = availableCarsIndex + 1 + ". " + cars[i].getRegistrationNumber();
+                        availableCarsIndex++;
+                    }
                 }
+            } catch (InvalidBooking e) {
+                e.getMessage();
             }
+
         }
 
         return availableCars;
@@ -293,31 +306,41 @@ public class MiRideApplication {
     /*
      * Displays All Bookings in Ascending/Descending Order as specified by user
      */
-    public String displayAllBookings(String sortOrder) {
+    public String displayAllBookings(String sortOrder, String carType) {
         Car[] availableCarsToBook;
         boolean carsAvailable = true;
         StringBuilder sb = new StringBuilder();
-
-        if (sortOrder.equals("D")) {
-            availableCarsToBook = sortInDescendingOrder();
-            if (availableCarsToBook.length == 0) {
-                carsAvailable = false;
-                return "No cars are available.";
+        try {
+            if (!(carType.equals("SD") | carType.equals("SS"))) {
+                throw new InvalidCarServiceType("Car Service Type Can Only Be SS or SD");
+            }
+            if (!(sortOrder.equals("D") | sortOrder.equals("A"))) {
+                throw new InvalidSortOrder("Car Service Type Can Only Be SS or SD");
             }
 
-        } else {
-            availableCarsToBook = sortInAscendingOrder();
-            if (availableCarsToBook.length == 0) {
-                carsAvailable = false;
-                return "No cars are available.";
-            }
-        }
-        if (carsAvailable == true) {
-            for (int i = 0; i < availableCarsToBook.length; i++) {
+            if (sortOrder.equals("D")) {
+                availableCarsToBook = SortInDescendingOrder(carType);
+                if (availableCarsToBook.length == 0) {
+                    carsAvailable = false;
+                    return "No cars are available.";
+                }
 
-                sb.append(availableCarsToBook[i].getDetails());
-
+            } else {
+                availableCarsToBook = SortInAscendingOrder(carType);
+                if (availableCarsToBook.length == 0) {
+                    carsAvailable = false;
+                    return "No cars are available.";
+                }
             }
+            if (carsAvailable == true) {
+                for (int i = 0; i < availableCarsToBook.length; i++) {
+
+                    sb.append(availableCarsToBook[i].getDetails());
+
+                }
+            }
+        } catch (InvalidCarServiceType | InvalidSortOrder e) {
+            System.out.println(e.getMessage());
         }
 
         return sb.toString();
@@ -422,20 +445,43 @@ public class MiRideApplication {
      * This method sorts the cars to display in Descending order. Used when
      * displaying all bookings.
      */
-    public Car[] sortInDescendingOrder() {
+    public Car[] SortInDescendingOrder(String carType) {
         boolean sorted = false;
         int numberOfCars = 0;
+        int puttingIndex = 0;
         Car temp;
 
         for (int i = 0; i < cars.length; i++) {
             if (cars[i] != null) {
-                numberOfCars++;
+                if (carType.equals("SS")) {
+                    if (cars[i] instanceof SilverServiceCar) {
+                        numberOfCars++;
+                    }
+                } else if (carType.equals("SD")) {
+                    if (!(cars[i] instanceof SilverServiceCar)) {
+                        numberOfCars++;
+                    }
+                }
+
             }
         }
         Car[] array = new Car[numberOfCars];
 
-        for (int i = 0; i < array.length; i++) {
-            array[i] = cars[i];
+        for (int i = 0; i < cars.length; i++) {
+            if (cars[i] != null) {
+                if (carType.equals("SS")) {
+                    if (cars[i] instanceof SilverServiceCar) {
+                        array[puttingIndex] = cars[i];
+                        puttingIndex++;
+                    }
+                } else if (carType.equals("SD")) {
+                    if (!(cars[i] instanceof SilverServiceCar)) {
+                        array[puttingIndex] = cars[i];
+                        puttingIndex++;
+                    }
+                }
+            }
+
         }
 
         while (!sorted) {
@@ -480,20 +526,43 @@ public class MiRideApplication {
      * This method sorts the cars to display in Ascending order. Used when
      * displaying all bookings.
      */
-    public Car[] sortInAscendingOrder() {
+    public Car[] SortInAscendingOrder(String carType) {
         boolean sorted = false;
         int numberOfCars = 0;
+        int puttingIndex = 0;
         Car temp;
 
         for (int i = 0; i < cars.length; i++) {
             if (cars[i] != null) {
-                numberOfCars++;
+                if (carType.equals("SS")) {
+                    if (cars[i] instanceof SilverServiceCar) {
+                        numberOfCars++;
+                    }
+                } else if (carType.equals("SD")) {
+                    if (!(cars[i] instanceof SilverServiceCar)) {
+                        numberOfCars++;
+                        System.out.println("Number Of Cars: " + numberOfCars);
+                    }
+                }
+
             }
         }
         Car[] array = new Car[numberOfCars];
 
-        for (int i = 0; i < array.length; i++) {
-            array[i] = cars[i];
+        for (int i = 0; i < cars.length; i++) {
+            if (cars[i] != null) {
+                if (carType.equals("SS")) {
+                    if (cars[i] instanceof SilverServiceCar) {
+                        array[puttingIndex] = cars[i];
+                        puttingIndex++;
+                    }
+                } else if (carType.equals("SD")) {
+                    if (!(cars[i] instanceof SilverServiceCar)) {
+                        array[puttingIndex] = cars[i];
+                        puttingIndex++;
+                    }
+                }
+            }
         }
 
         while (!sorted) {
@@ -681,7 +750,6 @@ public class MiRideApplication {
         String[] currentBookings = null;
         if (record.contains(currentBookingsDelimiter) == false && record.contains(pastBookingsDelimiter) == false) {
             actualRecord = record;
-            //System.out.println("Actual Record 1:" + actualRecord);
         } else {
             if (record.contains(currentBookingsDelimiter)) {
                 currentBookingDelimiterFound = true;
@@ -689,9 +757,7 @@ public class MiRideApplication {
                 endIndexOfCurrentBookingDelimiter = record.lastIndexOf(currentBookingsDelimiter);
 
                 actualRecord = record.substring(0, startIndexOfCurrentBookingDelimiter);
-                //System.out.println("Actual Record 2:" + actualRecord);
                 currentBookings = record.substring(startIndexOfCurrentBookingDelimiter + currentBookingsDelimiter.length(), endIndexOfCurrentBookingDelimiter).split("\\|");
-                //System.out.println("CurrentBookings:" + Arrays.toString(currentBookings));
 
             }
             if (record.contains(pastBookingsDelimiter)) {
@@ -703,9 +769,7 @@ public class MiRideApplication {
                 } else {
                     actualRecord = record.substring(0, startIndexOfPastBookingDelimiter);
                 }
-                //System.out.println("Actual Record 3:" + actualRecord);
                 pastBookings = record.substring(startIndexOfPastBookingDelimiter + currentBookingsDelimiter.length(), endIndexOfPastBookingDelimiter).split("\\|");
-                //System.out.println("Past Bookings:" + Arrays.toString(pastBookings));
             }
         }
         loadAllDataIntoSystem(actualRecord, currentBookings, pastBookings);

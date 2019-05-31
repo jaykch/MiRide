@@ -1,15 +1,16 @@
 package exception_handling;
 
 /*
- * Class:			InvalidRefreshments
- * Description:		Exception Class For InvalidRefreshments 
+ * Class:			SilverServiceCarMinimumBookingFee
+ * Description:		Exception Class For InvalidRegID 
  * Author:			Jay Kumar
  */
-public class InvalidRefreshments extends RuntimeException {
+public class SilverServiceCarMinimumBookingFee extends RuntimeException {
 
     String errorMessage;
 
-    public InvalidRefreshments(String errorMessage) {
+    public SilverServiceCarMinimumBookingFee(String errorMessage) {
+
         this.errorMessage = errorMessage;
     }
 
@@ -17,4 +18,5 @@ public class InvalidRefreshments extends RuntimeException {
     public String getMessage() {
         return "Error: " + errorMessage; //To change body of generated methods, choose Tools | Templates.
     }
+
 }
